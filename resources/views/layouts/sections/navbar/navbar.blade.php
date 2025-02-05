@@ -3,7 +3,7 @@
     use Illuminate\Support\Facades\Route;
     $containerNav = $configData['contentLayout'] === 'compact' ? 'container-xxl' : 'container-fluid';
     $navbarDetached = $navbarDetached ?? '';
-    $notifications = Illuminate\Support\Facades\Auth::user()->unreadNotifications()->get();
+    $notifications = Illuminate\Support\Facades\Auth::user()?->unreadNotifications()?->get();
 @endphp
 
 <!-- Navbar -->
@@ -200,8 +200,7 @@
         <!-- Notification -->
         <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2">
             <a class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow"
-                href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                aria-expanded="false">
+                href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                 <span class="position-relative">
                     <i class="ti ti-bell ti-md"></i>
                     <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
@@ -212,7 +211,8 @@
                     <div class="dropdown-header d-flex align-items-center py-3">
                         <h6 class="mb-0 me-auto">Notifications</h6>
                         <div class="d-flex align-items-center h6 mb-0">
-                            <span class="badge bg-label-primary me-2">{{ $notifications?->count() ?? 0 }} nouvelle(s)</span>
+                            <span class="badge bg-label-primary me-2">{{ $notifications?->count() ?? 0 }}
+                                nouvelle(s)</span>
                             <a href="javascript:void(0)"
                                 class="btn btn-text-secondary rounded-pill btn-icon dropdown-notifications-all"
                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Marquer tout comme lu"><i
@@ -222,11 +222,6 @@
                 </li>
                 <li class="dropdown-notifications-list scrollable-container">
                     <ul class="list-group list-group-flush">
-                        {{-- @if ($notifications->isEmpty())
-                            
-                        @else
-                            
-                        @endif --}}
                         @foreach ($notifications as $n)
                             <li class="list-group-item list-group-item-action dropdown-notifications-item">
                                 <div class="d-flex">
@@ -264,8 +259,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <a class="dropdown-item mt-0"
-                        href="{{ Route::has('profile.show') ? route('profile.show') : url('pages/profile-user') }}">
+                    <a class="dropdown-item mt-0" href="javascript:void(0);">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0 me-2">
                                 <div class="avatar avatar-online">
@@ -295,14 +289,14 @@
                     </a>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a class="dropdown-item" href="{{ route('parametres') }}">
                         <span class="d-flex align-items-center align-middle">
                             <i class="flex-shrink-0 ti ti-settings me-3 ti-md"></i>
                             <span class="flex-grow-1 align-middle">Paramètres</span>
                         </span>
                     </a>
-                </li>
+                </li> --}}
 
                 <li>
                     <div class="dropdown-divider my-1 mx-n2"></div>

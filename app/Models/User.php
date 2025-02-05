@@ -56,7 +56,7 @@ class User extends Authenticatable
         return $this->belongsTo(Service::class);
     }
 
-    public function Employe(): HasOne
+    public function employe(): HasOne
     {
         return $this->hasOne(Employe::class);
     }
@@ -69,5 +69,10 @@ class User extends Authenticatable
     public function responsable(): HasOne
     {
         return $this->hasOne(Responsable::class);
+    }
+
+    public function fonction()
+    {
+        return $this->belongsTo(Fonction::class);
     }
 }

@@ -1,9 +1,8 @@
 @extends('layouts/layoutMaster')
 
-@section('title', 'Profile - Pages')
+@section('title', 'Profile')
 
 @section('vendor-style')
-    @vite(['resources/assets/vendor/libs/sweetalert2/sweetalert2.scss'])
 @endsection
 
 <!-- Vendor Scripts -->

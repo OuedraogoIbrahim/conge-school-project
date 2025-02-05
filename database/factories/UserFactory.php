@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Fonction;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -29,9 +30,15 @@ class UserFactory extends Factory
             'nom' => 'grh',
             'prenom' => 'grh',
             'email' => 'grh@gmail.com',
+            'telephone' => 70707070,
+            'sexe' => 'masculin',
+            'adresse' => 'Ouagadougou',
+            'date_naissance' => '1995-12-12',
+            'date_embauche' => '2025-01-01',
             'password' => Hash::make('password'),
             'role' => 'grh',
             'service_id' => Service::query()->first()->id,
+            'fonction_id' => Fonction::query()->first()->id,
         ];
     }
 

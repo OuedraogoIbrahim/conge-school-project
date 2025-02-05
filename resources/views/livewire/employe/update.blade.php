@@ -1,7 +1,7 @@
 <div wire:ignore.self class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStart"
     aria-labelledby="offcanvasStartLabel">
     <div class="offcanvas-header border-bottom">
-        <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Modifier étudiant</h5>
+        <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Modifier employé</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
@@ -25,7 +25,7 @@
             <div class="mb-6">
                 <label class="form-label" for="prenom">Prénom</label>
                 <input type="text" wire:model='prenom' class="form-control @error('prenom') is-invalid @enderror"
-                    id="prenom" name="nom" />
+                    id="prenom" name="prenom" />
                 @error('prenom')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -49,6 +49,68 @@
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="mb-6">
+                <div wire:ignore>
+                    <label class="form-label" for="fonction-update">Fonction</label>
+                    <select id="fonction-update" class="select2 form-select @error('fonction') is-invalid @enderror">
+                        <option value="">Choisir la fonction</option>
+                    </select>
+                </div>
+                @error('fonction')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-6">
+                <label class="form-label" for="adresse">Adresse</label>
+                <input type="text" wire:model='adresse' class="form-control @error('adresse') is-invalid @enderror"
+                    id="adresse" name="adresse" />
+                @error('adresse')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-6">
+                <label class="form-label" for="telephone">Téléphne</label>
+                <input type="text" wire:model='telephone'
+                    class="form-control @error('telephone') is-invalid @enderror" id="telephone" name="telephone" />
+                @error('telephone')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-6">
+                <sapn class="fw-medium d-block">Sexe</sapn>
+                <div class="form-check form-check-inline mt-4">
+                    <input wire:model='sexe' class="form-check-input @error('sexe') is-invalid @enderror" type="radio"
+                        name="sexe" id="masc" value="masculin" />
+                    <label class="form-check-label" for="masc">Masculin</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input wire:model='sexe' class="form-check-input @error('sexe') is-invalid @enderror" type="radio"
+                        name="sexe" id="fem" value="feminin" />
+                    <label class="form-check-label" for="fem">Féminin</label>
+                </div>
+                @error('sexe')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-6">
+                <label for="flatpickr-date-debut" class="form-label">Date de naissance</label>
+                <input wire:model='dateNaissance' type="text" name="date-naissance" class="form-control"
+                    placeholder="YYYY-MM-DD" id="flatpickr-date-debut" />
+                @error('dateNaissance')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-6">
+                <label for="flatpickr-date-fin" class="form-label">Date d'embauche</label>
+                <input wire:model='dateEmbauche' type="text" name="date-fin" class="form-control"
+                    placeholder="YYYY-MM-DD" id="flatpickr-date-fin" />
+                @error('dateEmbauche')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+
             <button type="submit" class="btn btn-primary me-3 data-submit" wire:loading.attr="disabled">
                 <span wire:loading.remove>Mettre à jour</span>
                 <span wire:loading>
@@ -70,6 +132,15 @@
             $('#service-update').on('change', function(e) {
                 var data = $(this).val(); // Récupère la valeur sélectionnée
                 @this.set('service', data); // Met à jour la propriété Livewire
+                // @this.call('selectNiveau');
+            });
+        });
+
+        $(document).ready(function() {
+
+            $('#fonction-update').on('change', function(e) {
+                var data = $(this).val(); // Récupère la valeur sélectionnée
+                @this.set('fonction', data); // Met à jour la propriété Livewire
                 // @this.call('selectNiveau');
             });
         });
@@ -97,6 +168,31 @@
                     // Ajouter l'option avec l'attribut selected si la filière correspond
                     $('#service-update').append('<option value="' + service.id + '" ' + selected +
                         '>' + service
+                        .nom + '</option>');
+                });
+
+            });
+
+            //Fonction
+            let fonctionSelectionne = @this.get('fonction'); // Récupère la filière sélectionnée
+
+            @this.call('getFonctions').then(fonctions => {
+
+                // Vider les options actuelles
+                $('#fonction-update').empty();
+
+                // Ajouter l'option par défaut
+                $('#fonction-update').append('<option value="">Sélectionnez une fonction</option>');
+
+                // Ajouter les nouvelles options dynamiquement et sélectionner la bonne filière
+                fonctions.forEach(function(fonction) {
+
+                    // Vérifier si cette filière correspond à celle sélectionnée
+                    let selected = (fonction.id == fonctionSelectionne) ? 'selected' : '';
+
+                    // Ajouter l'option avec l'attribut selected si la filière correspond
+                    $('#fonction-update').append('<option value="' + fonction.id + '" ' + selected +
+                        '>' + fonction
                         .nom + '</option>');
                 });
 

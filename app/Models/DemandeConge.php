@@ -13,6 +13,10 @@ class DemandeConge extends Model
     /** @use HasFactory<\Database\Factories\DemandeCongeFactory> */
     use HasFactory, HasUuids;
 
+    protected $fillable = [
+        'statut_demande_id',
+    ];
+
     public function employe(): BelongsTo
     {
         return $this->belongsTo(Employe::class);

@@ -2,9 +2,15 @@
 
 use App\Http\Controllers\AuthentificationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DemandeValidationController;
 use App\Http\Controllers\EmployeController;
+use App\Http\Controllers\FonctionController;
 use App\Http\Controllers\ParametreController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResponsableController;
+use App\Http\Controllers\ServiceController;
+use App\Mail\DemandeCongeMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,18 +40,12 @@ Route::middleware(['auth', 'change.password'])->group(function () {
     Route::get('parametres', ParametreController::class)->name('parametres');
 
     Route::get('employes', EmployeController::class)->name('employes');
+    Route::get('responsables', ResponsableController::class)->name('responsables');
+    Route::get('services', ServiceController::class)->name('services');
+    Route::get('fonctions', FonctionController::class)->name('fonctions');
 
-    // Route::resource('filieres', FiliereController::class)->except(['show', 'update', 'destroy', 'store']);
-    // Route::resource('modules', ModuleController::class)->except(['show', 'update', 'destroy', 'store']);
-    // Route::resource('niveaux', NiveauController::class)->except(['show', 'update', 'destroy', 'store']);
-    // Route::resource('professeurs', ProfessorController::class)->except(['show', 'update', 'destroy', 'store']);
-    // Route::resource('etudiants', StudentController::class)->only(['index']);
-    // Route::resource('classes', ClassController::class)->except(['show', 'update', 'destroy', 'store']);
-    // Route::resource('plannings', PlanningController::class)->except(['create', 'edit', 'show', 'update', 'destroy', 'store']);
-    // Route::get('mon-planning', [PlanningController::class, 'myPlanning'])->name('mon.planning');
-    // Route::resource('sondages', SondageController::class)->except(['edit', 'update', 'destroy', 'store']);
-    // Route::resource('documents', DocumentController::class)->except(['show', 'update', 'destroy', 'store']);
-
+    Route::get('demande-conge/accepter/{demande}', 'App\Http\Controllers\DemandeValidationController@accepter')->name('demande.accepter');
+    Route::get('demande-conge/refuser/{demande}', 'App\Http\Controllers\DemandeValidationController@refuser')->name('demande.refuser');
 });
 
 // Route::resource('events', EventController::class);

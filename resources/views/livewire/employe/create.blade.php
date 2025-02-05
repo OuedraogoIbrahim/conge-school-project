@@ -55,6 +55,71 @@
                         <div class="text-danger mt-1">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-6">
+                    <div wire:ignore>
+                        <label class="form-label" for="fonction-take">Fonction</label>
+                        <select wire:model='fonction' id="fonction-take"
+                            class="select2 form-select @error('fonction') is-invalid @enderror">
+                            <option value="">Choisir la fonction</option>
+                            @foreach ($fonctions as $s)
+                                <option value={{ $s->id }}>{{ $s->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @error('fonction')
+                        <div class="text-danger mt-1">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-6">
+                    <label class="form-label" for="adresse">Adresse</label>
+                    <input type="text" wire:model='adresse'
+                        class="form-control @error('adresse') is-invalid @enderror" id="adresse" name="adresse" />
+                    @error('adresse')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-6">
+                    <label class="form-label" for="telephone">Téléphne</label>
+                    <input type="text" wire:model='telephone'
+                        class="form-control @error('telephone') is-invalid @enderror" id="telephone" name="telephone" />
+                    @error('telephone')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-6">
+                    <sapn class="fw-medium d-block">Sexe</sapn>
+                    <div class="form-check form-check-inline mt-4">
+                        <input wire:model='sexe' class="form-check-input @error('sexe') is-invalid @enderror"
+                            type="radio" name="sexe" id="masc" value="masculin" />
+                        <label class="form-check-label" for="masc">Masculin</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input wire:model='sexe' class="form-check-input @error('sexe') is-invalid @enderror"
+                            type="radio" name="sexe" id="fem" value="feminin" />
+                        <label class="form-check-label" for="fem">Féminin</label>
+                    </div>
+                    @error('sexe')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="flatpickr-date-debut" class="form-label">Date de naissance</label>
+                    <input wire:model='dateNaissance' type="text" name="date-naissance" class="form-control"
+                        placeholder="YYYY-MM-DD" id="flatpickr-date-debut" />
+                    @error('dateNaissance')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mb-6">
+                    <label for="flatpickr-date-fin" class="form-label">Date d'embauche</label>
+                    <input wire:model='dateEmbauche' type="text" name="date-fin" class="form-control"
+                        placeholder="YYYY-MM-DD" id="flatpickr-date-fin" />
+                    @error('dateEmbauche')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
 
                 <button type="submit" class="btn btn-primary me-3 data-submit" wire:loading.attr="disabled">
                     <span wire:loading.remove>Ajouter</span>
@@ -73,12 +138,17 @@
 @script
     <script>
         $(document).ready(function() {
-
             $('#service-take').on('change', function(e) {
-                var data = $(this).val(); // Récupère la valeur sélectionnée
-                console.log(data);
+                var data = $(this).val();
+                @this.set('service', data);
+                // @this.call('selectNiveau');
+            });
+        });
 
-                @this.set('service', data); // Met à jour la propriété Livewire
+        $(document).ready(function() {
+            $('#fonction-take').on('change', function(e) {
+                var data = $(this).val();
+                @this.set('fonction', data);
                 // @this.call('selectNiveau');
             });
         });

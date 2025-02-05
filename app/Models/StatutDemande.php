@@ -12,6 +12,8 @@ class StatutDemande extends Model
     /** @use HasFactory<\Database\Factories\StatutDemandeFactory> */
     use HasFactory, HasUuids;
 
+    protected $fillable = ['statut'];
+
     public function demandes(): HasMany
     {
         return $this->hasMany(DemandeConge::class);

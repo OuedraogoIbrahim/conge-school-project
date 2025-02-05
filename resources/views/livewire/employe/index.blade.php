@@ -1,27 +1,17 @@
 <div>
     <div class="card">
 
-        {{-- <div class="m-5">
+        <div class="m-5">
             @if (session()->has('message'))
                 <div class="alert alert-info">
                     {{ session('message') }}
                 </div>
             @endif
 
-            @if (session()->has('failedRows'))
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach (session('failedRows') as $failedRow)
-                            <li>Ligne {{ $failedRow['ligne'] }}: {{ implode(', ', $failedRow['erreurs']) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-        </div> --}}
+        </div>
 
         <div class="card-header border-bottom">
             <h5 class="card-title mb-0">Filtres</h5>
@@ -33,6 +23,17 @@
                         <option value="">Selectionner le service</option>
                         @foreach ($services as $s)
                             <option value={{ $s->id }}>{{ $s->nom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-4" wire:ignore>
+                    <label for="selectFonction" class="form-label">Fonction</label>
+                    <select wire:model='fonction' id="selectFonction" class="select2 form-select form-select-lg"
+                        data-allow-clear="false">
+                        <option value="">Selectionner la fonction</option>
+                        @foreach ($fonctions as $f)
+                            <option value={{ $f->id }}>{{ $f->nom }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -52,14 +53,20 @@
                 <div
                     class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0 mt-n6 mt-md-0">
 
-                    <div class="dt-buttons btn-group flex-wrap">
+                    <div class="dt-buttons btn-group flex-wrap gap-5">
                         @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
                                 Illuminate\Support\Facades\Auth::user()->role == 'responsable')
-                            <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4"
+                            <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4 ml-5"
                                 tabindex="0" aria-controls="DataTables_Table_0" type="button"
                                 data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i
                                         class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
                                         class="d-none d-sm-inline-block">Ajouter un employé</span></span>
+                            </button>
+                            <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4"
+                                tabindex="0" aria-controls="DataTables_Table_0" type="button"
+                                data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i
+                                        class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
+                                        class="d-none d-sm-inline-block">Ajouter un responsable</span></span>
                             </button>
                         @endif
                     </div>
@@ -76,6 +83,7 @@
                         <th>Prénom</th>
                         <th>Email</th>
                         <th>Service</th>
+                        <th>Fonction</th>
                         @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
                                 Illuminate\Support\Facades\Auth::user()->role == 'responsable')
                             <th>Actions</th>
@@ -95,6 +103,7 @@
                                 <th>{{ $user->prenom }}</th>
                                 <th>{{ $user->email }}</th>
                                 <th>{{ $user->service->nom }}</th>
+                                <th>{{ $user->fonction->nom }}</th>
                                 @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
                                         Illuminate\Support\Facades\Auth::user()->role == 'responsable')
                                     <td class="" style="">
@@ -182,6 +191,14 @@
             $('#selectService').on('change', function(e) {
                 var data = $('#selectService').select2("val");
                 @this.set('service', data);
+
+            });
+        });
+        $(document).ready(function() {
+            // $('#selectService').select2();
+            $('#selectFonction').on('change', function(e) {
+                var data = $('#selectFonction').select2("val");
+                @this.set('fonction', data);
 
             });
         });

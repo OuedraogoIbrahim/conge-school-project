@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Employe;
 
+use App\Models\Fonction;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,8 @@ class Index extends Component
 
     public $services;
     public $service;
+    public $fonctions;
+    public $fonction;
     public $niveaux;
     public $niveau;
     public $search;
@@ -24,6 +27,7 @@ class Index extends Component
     public function mount()
     {
         $this->services = Service::all();
+        $this->fonctions = Fonction::query()->where('nom', '!=', 'Administrateur')->get();
     }
 
     public function deleteEmploye($id)
@@ -41,10 +45,15 @@ class Index extends Component
     {
 
         $users = User::query()
-            // Filtrer par filière et niveau en utilisant la relation avec Student
+            ->where('role', 'employe')
             ->whereHas('service', function ($query) {
                 $query->when($this->service, function ($query) {
                     $query->where('service_id', $this->service);
+                });
+            })
+            ->whereHas('fonction', function ($query) {
+                $query->when($this->fonction, function ($query) {
+                    $query->where('fonction_id', $this->fonction);
                 });
             })
             // Ajouter une condition pour filtrer par nom ou prénom
@@ -54,7 +63,7 @@ class Index extends Component
                         ->orWhere('prenom', 'like', '%' . $this->search . '%');
                 });
             })
-            ->where('id', '!=', Auth::user()->id)
+            // ->where('id', '!=', Auth::user()->id)
             ->paginate(10);
 
         return view('livewire.employe.index', compact('users'));
