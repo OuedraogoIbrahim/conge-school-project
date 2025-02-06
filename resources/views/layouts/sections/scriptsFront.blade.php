@@ -8,6 +8,7 @@
   'resources/assets/vendor/libs/node-waves/node-waves.js'
 ])
 
+
 @yield('vendor-script')
 <!-- END: Page Vendor JS-->
 <!-- BEGIN: Theme JS-->

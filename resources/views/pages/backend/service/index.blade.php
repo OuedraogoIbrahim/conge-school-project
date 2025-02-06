@@ -19,7 +19,7 @@
 @section('content')
 
     @livewire('Service.Index')
-    @livewire('Service.Create');
-    @livewire('Service.Update');
+    @livewire('Service.Create')
+    @livewire('Service.Update')
 
 @endsection

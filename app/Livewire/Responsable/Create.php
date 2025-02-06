@@ -73,7 +73,7 @@ class Create extends Component
             $responsable->user_id = $user->id;
             $responsable->save();
 
-            redirect()->route('responsables')->with('message', 'Responsable ' . $this->nom . ' ajouté avec succès');
+            redirect()->route('employes')->with('message', 'Responsable ' . $this->nom . ' ajouté avec succès');
         }
     }
 

@@ -43,19 +43,6 @@
 
 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
-    @if (!isset($menuHorizontal))
-        <!-- Search -->
-        <div class="navbar-nav align-items-center">
-            <div class="nav-item navbar-search-wrapper mb-0">
-                <a class="nav-item nav-link search-toggler d-flex align-items-center px-0" href="javascript:void(0);">
-                    <i class="ti ti-search ti-md me-2 me-lg-4 ti-lg"></i>
-                    <span class="d-none d-md-inline-block text-muted fw-normal">Search (Ctrl+/)</span>
-                </a>
-            </div>
-        </div>
-        <!-- /Search -->
-    @endif
-
     <ul class="navbar-nav flex-row align-items-center ms-auto">
         @if (isset($menuHorizontal))
             <!-- Search -->
@@ -68,37 +55,7 @@
             <!-- /Search -->
         @endif
 
-        <!-- Language -->
-        {{-- <li class="nav-item dropdown-language dropdown">
-            <a class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-              <i class='ti ti-language rounded-circle ti-md'></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{url('lang/en')}}" data-language="en" data-text-direction="ltr">
-                  <span>English</span>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {{ app()->getLocale() === 'fr' ? 'active' : '' }}" href="{{url('lang/fr')}}" data-language="fr" data-text-direction="ltr">
-                  <span>French</span>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{url('lang/ar')}}" data-language="ar" data-text-direction="rtl">
-                  <span>Arabic</span>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {{ app()->getLocale() === 'de' ? 'active' : '' }}" href="{{url('lang/de')}}" data-language="de" data-text-direction="ltr">
-                  <span>German</span>
-                </a>
-              </li>
-            </ul>
-          </li> --}}
-        <!--/ Language -->
-
-        @if ($configData['hasCustomizer'] == true)
+        {{-- @if ($configData['hasCustomizer'] == true)
             <!-- Style Switcher -->
             <li class="nav-item dropdown-style-switcher dropdown">
                 <a class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow"
@@ -125,77 +82,7 @@
                 </ul>
             </li>
             <!-- / Style Switcher -->
-        @endif
-
-        <!-- Raccourcis  -->
-        <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown">
-            <a class="nav-link btn btn-text-secondary btn-icon rounded-pill btn-icon dropdown-toggle hide-arrow"
-                href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                <i class='ti ti-layout-grid-add ti-md'></i>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end p-0">
-                <div class="dropdown-menu-header border-bottom">
-                    <div class="dropdown-header d-flex align-items-center py-3">
-                        <h6 class="mb-0 me-auto">Raccourcis</h6>
-                        <a href="javascript:void(0)"
-                            class="btn btn-text-secondary rounded-pill btn-icon dropdown-shortcuts-add"
-                            data-bs-toggle="tooltip" data-bs-placement="top" title="Add shortcuts"><i
-                                class="ti ti-plus text-heading"></i></a>
-                    </div>
-                </div>
-                <div class="dropdown-shortcuts-list scrollable-container">
-                    <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-calendar ti-26px text-heading"></i>
-                            </span>
-                            <a href="" class="stretched-link">Calendrier</a>
-                            <small>Emploi du temps</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-settings ti-26px text-heading"></i>
-                            </span>
-                            <a href="" class="stretched-link">Paramètres</a>
-                            <small>Paramètres du profile</small>
-                        </div>
-                    </div>
-                    <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-user ti-26px text-heading"></i>
-                            </span>
-                            <a href="" class="stretched-link">Employés</a>
-                            <small>Liste des employés</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-device-desktop-analytics ti-26px text-heading"></i>
-                            </span>
-                            <a href="{{ route('dashboard') }}" class="stretched-link">Tableau de bord</a>
-                            <small>Mon tableau de bord</small>
-                        </div>
-                    </div>
-                    {{-- <div class="row row-bordered overflow-visible g-0">
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-device-desktop-analytics ti-26px text-heading"></i>
-                            </span>
-                            <a href="{{ route('dashboard') }}" class="stretched-link">Tableau de bord</a>
-                            <small>Mon tableau de bord</small>
-                        </div>
-                        <div class="dropdown-shortcuts-item col">
-                            <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                                <i class="ti ti-help ti-26px text-heading"></i>
-                            </span>
-                            <a href="" class="stretched-link">FAQs</a>
-                            <small>FAQs & Articles</small>
-                        </div>
-                    </div> --}}
-                </div>
-            </div>
-        </li>
-        <!-- Raccourcis -->
+        @endif --}}
 
         <!-- Notification -->
         <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2">
@@ -211,11 +98,12 @@
                     <div class="dropdown-header d-flex align-items-center py-3">
                         <h6 class="mb-0 me-auto">Notifications</h6>
                         <div class="d-flex align-items-center h6 mb-0">
-                            <span class="badge bg-label-primary me-2">{{ $notifications?->count() ?? 0 }}
-                                nouvelle(s)</span>
+                            <span
+                                class="badge bg-label-primary me-2">{{ $notifications->count() > 0 ? '' : $notifications->count() . ' nouvelle' }}
+                            </span>
                             <a href="javascript:void(0)"
                                 class="btn btn-text-secondary rounded-pill btn-icon dropdown-notifications-all"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title="Marquer tout comme lu"><i
+                                data-bs-toggle="tooltip" data-bs-placement="top" title=""><i
                                     class="ti ti-mail-opened text-heading"></i></a>
                         </div>
                     </div>
@@ -227,7 +115,7 @@
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar">
-                                            <span class="avatar-initial rounded-circle bg-label-danger">C</span>
+                                            <span class="avatar-initial rounded-circle bg-label-danger">R</span>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
@@ -238,8 +126,8 @@
                                     <div class="flex-shrink-0 dropdown-notifications-actions">
                                         <a href="javascript:void(0)" class="dropdown-notifications-read"><span
                                                 class="badge badge-dot"></span></a>
-                                        <a href="javascript:void(0)" class="dropdown-notifications-archive"><span
-                                                class="ti ti-x"></span></a>
+                                        <a href="javascript:void(0)" onclick="markAsRead('{{ $n->id }}')"
+                                            class="dropdown-notifications-archive"><span class="ti ti-x"></span></a>
                                     </div>
                                 </div>
                             </li>
@@ -289,15 +177,6 @@
                     </a>
                 </li>
 
-                {{-- <li>
-                    <a class="dropdown-item" href="{{ route('parametres') }}">
-                        <span class="d-flex align-items-center align-middle">
-                            <i class="flex-shrink-0 ti ti-settings me-3 ti-md"></i>
-                            <span class="flex-grow-1 align-middle">Paramètres</span>
-                        </span>
-                    </a>
-                </li> --}}
-
                 <li>
                     <div class="dropdown-divider my-1 mx-n2"></div>
                 </li>
@@ -344,3 +223,30 @@
 @endif
 </nav>
 <!-- / Navbar -->
+
+<script>
+    function markAsRead(notificationId) {
+        fetch(`notifications/read/${notificationId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    id: notificationId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.log(response);
+
+                    throw new Error("Erreur lors de la mise à jour de la notification");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Notification marquée comme lue", data);
+            })
+            .catch(error => console.error("Erreur :", error));
+    }
+</script>

@@ -1,5 +1,5 @@
-<div wire:ignore.self class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStart"
-    aria-labelledby="offcanvasStartLabel">
+<div wire:ignore.self class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStartResponsable"
+    aria-labelledby="offcanvasStartLabelResponsable">
 
     @if (session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
@@ -10,7 +10,7 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
-        <form class="add-new-user pt-0" id="addNewUserForm" wire:submit='update'>
+        <form class="add-new-user pt-0" id="addNewUserFormResponsable" wire:submit='update'>
             <div class="mb-6">
                 <label class="form-label" for="add-user-contact">Matricule</label>
                 <input type="text" wire:model='matricule' id="add-user-contact"
@@ -45,8 +45,9 @@
             </div>
             <div class="mb-6">
                 <div wire:ignore>
-                    <label class="form-label" for="service-update">Service</label>
-                    <select id="service-update" class="select2 form-select @error('service') is-invalid @enderror">
+                    <label class="form-label" for="service-update-responsable">Service</label>
+                    <select id="service-update-responsable"
+                        class="select2 form-select @error('service') is-invalid @enderror">
                         <option value="">Choisir le service</option>
                     </select>
                 </div>
@@ -56,8 +57,9 @@
             </div>
             <div class="mb-6">
                 <div wire:ignore>
-                    <label class="form-label" for="fonction-update">Fonction</label>
-                    <select id="fonction-update" class="select2 form-select @error('fonction') is-invalid @enderror">
+                    <label class="form-label" for="fonction-update-responsable">Fonction</label>
+                    <select id="fonction-update-responsable"
+                        class="select2 form-select @error('fonction') is-invalid @enderror">
                         <option value="">Choisir la fonction</option>
                     </select>
                 </div>
@@ -134,7 +136,7 @@
     <script>
         $(document).ready(function() {
 
-            $('#service-update').on('change', function(e) {
+            $('#service-update-responsable').on('change', function(e) {
                 var data = $(this).val(); // Récupère la valeur sélectionnée
                 @this.set('service', data); // Met à jour la propriété Livewire
                 // @this.call('selectNiveau');
@@ -143,7 +145,7 @@
 
         $(document).ready(function() {
 
-            $('#fonction-update').on('change', function(e) {
+            $('#fonction-update-responsable').on('change', function(e) {
                 var data = $(this).val(); // Récupère la valeur sélectionnée
                 @this.set('fonction', data); // Met à jour la propriété Livewire
                 // @this.call('selectNiveau');
@@ -159,10 +161,11 @@
             @this.call('getServices').then(services => {
 
                 // Vider les options actuelles
-                $('#service-update').empty();
+                $('#service-update-responsable').empty();
 
                 // Ajouter l'option par défaut
-                $('#service-update').append('<option value="">Sélectionnez un service</option>');
+                $('#service-update-responsable').append(
+                    '<option value="">Sélectionnez un service</option>');
 
                 // Ajouter les nouvelles options dynamiquement et sélectionner la bonne filière
                 services.forEach(function(service) {
@@ -171,7 +174,8 @@
                     let selected = (service.id == serviceSelectionne) ? 'selected' : '';
 
                     // Ajouter l'option avec l'attribut selected si la filière correspond
-                    $('#service-update').append('<option value="' + service.id + '" ' + selected +
+                    $('#service-update-responsable').append('<option value="' + service.id + '" ' +
+                        selected +
                         '>' + service
                         .nom + '</option>');
                 });
@@ -184,10 +188,11 @@
             @this.call('getFonctions').then(fonctions => {
 
                 // Vider les options actuelles
-                $('#fonction-update').empty();
+                $('#fonction-update-responsable').empty();
 
                 // Ajouter l'option par défaut
-                $('#fonction-update').append('<option value="">Sélectionnez une fonction</option>');
+                $('#fonction-update-responsable').append(
+                    '<option value="">Sélectionnez une fonction</option>');
 
                 // Ajouter les nouvelles options dynamiquement et sélectionner la bonne filière
                 fonctions.forEach(function(fonction) {
@@ -196,7 +201,8 @@
                     let selected = (fonction.id == fonctionSelectionne) ? 'selected' : '';
 
                     // Ajouter l'option avec l'attribut selected si la filière correspond
-                    $('#fonction-update').append('<option value="' + fonction.id + '" ' + selected +
+                    $('#fonction-update-responsable').append('<option value="' + fonction.id +
+                        '" ' + selected +
                         '>' + fonction
                         .nom + '</option>');
                 });

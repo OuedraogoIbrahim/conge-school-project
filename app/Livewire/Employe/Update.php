@@ -94,22 +94,48 @@ class Update extends Component
     {
 
         $this->validate();
-        $this->user->nom = $this->nom;
-        $this->user->prenom = $this->prenom;
-        $this->user->email = $this->email;
-        $this->user->telephone = $this->telephone;
-        $this->user->matricule = $this->matricule;
-        $this->user->service_id = $this->service;
-        $this->user->fonction_id = $this->fonction;
-        $this->user->adresse = $this->adresse;
-        $this->user->date_naissance = $this->dateNaissance;
-        $this->user->date_embauche = $this->dateEmbauche;
-        $this->user->adresse = $this->adresse;
-        $this->user->sexe = $this->sexe;
+        if ($this->user->role == 'employe') {
+            $this->user->nom = $this->nom;
+            $this->user->prenom = $this->prenom;
+            $this->user->email = $this->email;
+            $this->user->telephone = $this->telephone;
+            $this->user->matricule = $this->matricule;
+            $this->user->service_id = $this->service;
+            $this->user->fonction_id = $this->fonction;
+            $this->user->adresse = $this->adresse;
+            $this->user->date_naissance = $this->dateNaissance;
+            $this->user->date_embauche = $this->dateEmbauche;
+            $this->user->adresse = $this->adresse;
+            $this->user->sexe = $this->sexe;
+            $this->user->update();
+            redirect()->route('employes')->with('message', 'Employé(s) ' . $this->nom . ' modifié avec succès');
+        } else {
+            $responsableExistant = User::query()
+                ->where('role', 'responsable')
+                ->where('service_id', $this->service)
+                ->where('id', '!=', $this->user->id)
+                ->first();
 
-
-        $this->user->update();
-        redirect()->route('employes')->with('message', 'Employé(s) ' . $this->nom . ' modifié avec succès');
+            if ($responsableExistant) {
+                session()->flash('error', 'Un responsable existe déjà pour ce service.');
+            } else {
+                $this->validate();
+                $this->user->nom = $this->nom;
+                $this->user->prenom = $this->prenom;
+                $this->user->email = $this->email;
+                $this->user->telephone = $this->telephone;
+                $this->user->matricule = $this->matricule;
+                $this->user->service_id = $this->service;
+                $this->user->fonction_id = $this->fonction;
+                $this->user->adresse = $this->adresse;
+                $this->user->date_naissance = $this->dateNaissance;
+                $this->user->date_embauche = $this->dateEmbauche;
+                $this->user->adresse = $this->adresse;
+                $this->user->sexe = $this->sexe;
+                $this->user->update();
+                redirect()->route('employes')->with('message', 'Responsable ' . $this->nom . ' modifié avec succès');
+            }
+        }
     }
 
     public function render()

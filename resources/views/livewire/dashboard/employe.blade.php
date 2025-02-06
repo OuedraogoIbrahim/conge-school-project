@@ -1,5 +1,7 @@
 <div>
-
+    @php
+        $notifications = App\Models\User::query()->where('role', 'grh')->first()->notifications()->get();
+    @endphp
     <div class="m-5">
         @if (session()->has('message'))
             <div class="alert alert-info">
@@ -104,6 +106,47 @@
         </div>
     </div>
 
+    {{-- Conges actifs  --}}
+    <div class="row g-6 mb-10">
+        <div class="col-12">
+            <h4 class="mb-4">📅 Mes demandes de congé en cours</h4>
+        </div>
+
+        @if ($demandesActives->isEmpty())
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    <i class="ti ti-info-circle"></i> Vous n'avez aucune demande de congé en cours.
+                </div>
+            </div>
+        @else
+            @foreach ($demandesActives as $demande)
+                @php
+                    $dateDebut = \Carbon\Carbon::parse($demande->date_debut);
+                    $dateFin = \Carbon\Carbon::parse($demande->date_fin);
+                    $duree = $dateDebut->diffInDays($dateFin) + 1; // +1 pour inclure le dernier jour
+                @endphp
+                <div class="col-12 col-lg-4 ps-md-4 ps-lg-6">
+                    <div class="card shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">Période de congé</h5>
+                                <p class="mb-2 text-muted">
+                                    {{ $dateDebut->translatedFormat('d M Y') }} -
+                                    {{ $dateFin->translatedFormat('d M Y') }}
+                                </p>
+                                <span class="badge bg-label-info">{{ $demande->type_conge }}</span>
+                            </div>
+                            <div class="text-end">
+                                <h4 class="mb-2">{{ $duree }}<span class="text-body">j</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @endif
+    </div>
+    {{-- Conges actifs  --}}
+
     <!-- Demandes -->
     <div class="col-lg-12">
         <div class="card h-100">
@@ -111,17 +154,6 @@
                 <div class="card-title mb-0">
                     <h5 class="mb-1">Demandes</h5>
                     <p class="card-subtitle">Suivi des demandes</p>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1" type="button"
-                        id="demandesTabs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="demandesTabs">
-                        <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                    </div>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -164,6 +196,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $notificationDemandeIds = $notifications->pluck('data.demande')->toArray();
+                                        @endphp
+
                                         @forelse ($demandesAttentes as $d)
                                             <tr>
                                                 <td class="pt-4">
@@ -189,9 +225,15 @@
                                                             <i class="ti ti-dots-vertical ti-md text-muted"></i>
                                                         </button>
                                                         <div class="dropdown-menu dropdown-menu-end">
-                                                            <button wire:click='markAsDone("{{ $d->id }}")'
-                                                                class="dropdown-item" href="javascrip();">On
-                                                                verra</button>
+                                                            @if (in_array($d->id, $notificationDemandeIds))
+                                                                <button class="dropdown-item" disabled>Demande de
+                                                                    modification en attente</button>
+                                                            @else
+                                                                <button
+                                                                    wire:click='demandeModification("{{ $d->id }}")'
+                                                                    class="dropdown-item">Demander la modification de
+                                                                    cette demande</button>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </td>
@@ -204,6 +246,7 @@
                                             </tr>
                                         @endforelse
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -370,364 +413,6 @@
     </div>
     <!--/ Demandes -->
 
-
-    <div class="row">
-        <!-- Vehicles overview -->
-        <div class="col-xxl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="m-0 me-2">Vehicles Overview</h5>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
-                            type="button" id="vehiclesOverview" data-bs-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesOverview">
-                            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-none d-lg-flex vehicles-progress-labels mb-6">
-                        <div class="vehicles-progress-label on-the-way-text" style="width: 39.7%;">On the way</div>
-                        <div class="vehicles-progress-label unloading-text" style="width: 28.3%;">Unloading</div>
-                        <div class="vehicles-progress-label loading-text" style="width: 17.4%;">Loading</div>
-                        <div class="vehicles-progress-label waiting-text text-nowrap" style="width: 14.6%;">Waiting
-                        </div>
-                    </div>
-                    <div class="vehicles-overview-progress progress rounded-3 mb-6" style="height: 46px;">
-                        <div class="progress-bar fw-medium text-start bg-lighter text-dark px-4 rounded-0"
-                            role="progressbar" style="width: 39.7%" aria-valuenow="39.7" aria-valuemin="0"
-                            aria-valuemax="100">39.7%</div>
-                        <div class="progress-bar fw-medium text-start bg-primary px-4" role="progressbar"
-                            style="width: 28.3%" aria-valuenow="28.3" aria-valuemin="0" aria-valuemax="100">28.3%
-                        </div>
-                        <div class="progress-bar fw-medium text-start text-bg-info px-2 px-sm-4" role="progressbar"
-                            style="width: 17.4%" aria-valuenow="17.4" aria-valuemin="0" aria-valuemax="100">17.4%
-                        </div>
-                        <div class="progress-bar fw-medium text-start snackbar text-paper px-1 px-sm-3 rounded-0 px-lg-4"
-                            role="progressbar" style="width: 14.6%" aria-valuenow="14.6" aria-valuemin="0"
-                            aria-valuemax="100">14.6%</div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table card-table">
-                            <tbody class="table-border-bottom-0">
-                                <tr>
-                                    <td class="w-50 ps-0">
-                                        <div class="d-flex justify-content-start align-items-center">
-                                            <div class="me-2">
-                                                <i class='ti ti-car ti-lg text-heading'></i>
-                                            </div>
-                                            <h6 class="mb-0 fw-normal">On the way</h6>
-                                        </div>
-                                    </td>
-                                    <td class="text-end pe-0 text-nowrap">
-                                        <h6 class="mb-0">2hr 10min</h6>
-                                    </td>
-                                    <td class="text-end pe-0">
-                                        <span>39.7%</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="w-50 ps-0">
-                                        <div class="d-flex justify-content-start align-items-center">
-                                            <div class="me-2">
-                                                <i class='ti ti-circle-arrow-down ti-lg text-heading'></i>
-                                            </div>
-                                            <h6 class="mb-0 fw-normal">Unloading</h6>
-                                        </div>
-                                    </td>
-                                    <td class="text-end pe-0 text-nowrap">
-                                        <h6 class="mb-0">3hr 15min</h6>
-                                    </td>
-                                    <td class="text-end pe-0">
-                                        <span>28.3%</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="w-50 ps-0">
-                                        <div class="d-flex justify-content-start align-items-center">
-                                            <div class="me-2">
-                                                <i class='ti ti-circle-arrow-up ti-lg text-heading'></i>
-                                            </div>
-                                            <h6 class="mb-0 fw-normal">Loading</h6>
-                                        </div>
-                                    </td>
-                                    <td class="text-end pe-0 text-nowrap">
-                                        <h6 class="mb-0">1hr 24min</h6>
-                                    </td>
-                                    <td class="text-end pe-0">
-                                        <span>17.4%</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="w-50 ps-0">
-                                        <div class="d-flex justify-content-start align-items-center">
-                                            <div class="me-2">
-                                                <i class='ti ti-clock ti-lg text-heading'></i>
-                                            </div>
-                                            <h6 class="mb-0 fw-normal">Waiting</h6>
-                                        </div>
-                                    </td>
-                                    <td class="text-end pe-0 text-nowrap">
-                                        <h6 class="mb-0">5hr 19min</h6>
-                                    </td>
-                                    <td class="text-end pe-0">
-                                        <span>14.6%</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--/ Vehicles overview -->
-        <!-- Shipment statistics-->
-        <div class="col-xxl-6 col-lg-7">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="mb-1">Shipment statistics</h5>
-                        <p class="card-subtitle">Total number of deliveries 23.8k</p>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-label-primary">January</button>
-                        <button type="button" class="btn btn-label-primary dropdown-toggle dropdown-toggle-split"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="javascript:void(0);">January</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">February</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">March</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">April</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">May</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">June</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">July</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">August</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">September</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">October</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">November</a></li>
-                            <li><a class="dropdown-item" href="javascript:void(0);">December</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="shipmentStatisticsChart"></div>
-                </div>
-            </div>
-        </div>
-        <!--/ Shipment statistics -->
-        <!-- Delivery Performance -->
-        <div class="col-xxl-4 col-lg-5">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="mb-1">Delivery Performance</h5>
-                        <p class="card-subtitle">12% increase in this month</p>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
-                            type="button" id="deliveryPerformance" data-bs-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryPerformance">
-                            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <ul class="p-0 m-0">
-                        <li class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-primary"><i
-                                        class="ti ti-package ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Packages in transit</h6>
-                                    <small class="text-success fw-normal d-block">
-                                        <i class="ti ti-chevron-up mb-1 me-1"></i>
-                                        25.8%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">10k</h6>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-info"><i
-                                        class="ti ti-truck ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Packages out for delivery</h6>
-                                    <small class="text-success fw-normal d-block">
-                                        <i class="ti ti-chevron-up mb-1 me-1"></i>
-                                        4.3%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">5k</h6>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-success"><i
-                                        class="ti ti-circle-check ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Packages delivered</h6>
-                                    <small class="text-danger fw-normal d-block">
-                                        <i class="ti ti-chevron-down mb-1 me-1"></i>
-                                        12.5%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">15k</h6>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-warning"><i
-                                        class="ti ti-percentage ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Delivery success rate</h6>
-                                    <small class="text-success fw-normal d-block">
-                                        <i class="ti ti-chevron-up mb-1 me-1"></i>
-                                        35.6%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">95%</h6>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-secondary"><i
-                                        class="ti ti-clock ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Average delivery time</h6>
-                                    <small class="text-danger fw-normal d-block">
-                                        <i class="ti ti-chevron-down mb-1 me-1"></i>
-                                        2.15%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">2.5 Days</h6>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex">
-                            <div class="avatar flex-shrink-0 me-4">
-                                <span class="avatar-initial rounded bg-label-danger"><i
-                                        class="ti ti-users ti-26px"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0 fw-normal">Customer satisfaction</h6>
-                                    <small class="text-success fw-normal d-block">
-                                        <i class="ti ti-chevron-up mb-1 me-1"></i>
-                                        5.7%
-                                    </small>
-                                </div>
-                                <div class="user-progress">
-                                    <h6 class="text-body mb-0">4.5/5</h6>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!--/ Delivery Performance -->
-        <!-- Reasons for delivery exceptions -->
-        <div class="col-xxl-4 col-lg-6">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="m-0 me-2">Reasons for delivery exceptions</h5>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
-                            type="button" id="deliveryExceptions" data-bs-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryExceptions">
-                            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="deliveryExceptionsChart"></div>
-                </div>
-            </div>
-        </div>
-        <!--/ Reasons for delivery exceptions -->
-
-        <!-- On route vehicles Table -->
-
-        <div class="col-12 order-5">
-            <div class="card">
-                <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                        <h5 class="m-0 me-2">On route vehicles</h5>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
-                            type="button" id="routeVehicles" data-bs-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="routeVehicles">
-                            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-datatable table-responsive">
-                    <table class="dt-route-vehicles table table-sm">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th>location</th>
-                                <th>starting route</th>
-                                <th>ending route</th>
-                                <th>warnings</th>
-                                <th class="w-20">progress</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!--/ On route vehicles Table -->
-    </div>
 
     @include('_partials/_modals/modal-create-demande')
     @include('_partials/_modals/modal-edit-demande')

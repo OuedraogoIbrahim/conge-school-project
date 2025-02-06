@@ -6,8 +6,11 @@ use App\Mail\DemandeCongeMail;
 use App\Models\DemandeConge;
 use App\Models\StatutDemande;
 use App\Models\User;
+use App\Notifications\DemandeCongeNotification;
+use App\Notifications\ModificationDemandeNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
@@ -22,6 +25,7 @@ class Employe extends Component
     public $demandesAcceptees;
     public $demandesRefusees;
     public $demandesPlannifiees;
+    public $demandesActives;
 
     public $statutAttente;
     public $statutAccepter;
@@ -72,6 +76,7 @@ class Employe extends Component
         $this->demandesAcceptees = $demandes->where('statut_demande_id', $this->statutAccepter?->id);
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
         $this->demandesPlannifiees = $demandes->where('statut_demande_id', $this->statutPlannifier?->id);
+        $this->demandesActives = $this->demandesAcceptees->where('date_fin', '>=', now()->toDateString());
     }
 
     public function submit()
@@ -86,15 +91,16 @@ class Employe extends Component
         $demande->employe_id = $this->employe->id;
         if ($this->statutDemande == $this->statutAttente->id) {
             try {
-                Mail::to($this->responsableService->email)->send(new DemandeCongeMail(Auth::user(), $demande));
                 $demande->save();
-                return redirect()->route('dashboard')->with('message', 'Demande d\'absence/congé ajoutée avec succès');
+                Mail::to($this->responsableService->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+                Notification::send($this->responsableService, new DemandeCongeNotification($demande));
+                return redirect()->route('dashboard')->with('message', 'Demande absence/congé ajoutée avec succès');
             } catch (\Exception $e) {
                 return redirect()->route('dashboard')->with('error', 'Une erreur est survenue : ' . $e->getMessage());
             }
         } else {
             $demande->save();
-            return redirect()->route('dashboard')->with('message', 'Demande d\'absence/congé ajoutée avec succès');
+            return redirect()->route('dashboard')->with('message', 'Demande absence/congé ajoutée avec succès');
         }
     }
 
@@ -111,14 +117,15 @@ class Employe extends Component
         if ($this->statutDemande == $this->statutAttente->id) {
             try {
                 Mail::to($this->responsableService->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+                Notification::send($this->responsableService, new DemandeCongeNotification($demande));
                 $demande->update();
-                return redirect()->route('dashboard')->with('message', 'Demande d\'absence/congé mise à jour avec succès');
+                return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
             } catch (\Exception $e) {
                 return redirect()->route('dashboard')->with('error', 'Une erreur est survenue : ' . $e->getMessage());
             }
         } else {
             $demande->update();
-            return redirect()->route('dashboard')->with('message', 'Demande d\'absence/congé mise à jour avec succès');
+            return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
         }
     }
 
@@ -128,6 +135,7 @@ class Employe extends Component
 
         try {
             Mail::to($this->responsableService->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+            Notification::send($this->responsableService, new DemandeCongeNotification($demande));
             $demande->statut_demande_id = $this->statutAttente->id;
             $demande->update();
             return redirect()->route('dashboard')->with('message', 'Une demande a changé de statut (plannifié)');
@@ -145,6 +153,14 @@ class Employe extends Component
         $this->typeConge = $demande->type_conge;
         $this->statutDemande = $demande->statut_demande_id;
         $this->dispatch('event-update', ['id' => $this->typeConge])->self();
+    }
+
+    public function demandeModification(DemandeConge $demande)
+    {
+        $grh = User::query()->where('role', 'grh')->first();
+        // Mail::to($grh->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+        Notification::send($grh, new ModificationDemandeNotification($demande, Auth::user()));
+        return redirect()->route('dashboard')->with('message', 'Demande de modification envoyée avec succès');
     }
 
     public function render()

@@ -1,11 +1,19 @@
 <div wire:ignore.self class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStart"
     aria-labelledby="offcanvasStartLabel">
     <div class="offcanvas-header border-bottom">
-        <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Modifier employé</h5>
+        <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Modifier
+            {{ !empty($user) && $user->role == 'employe' ? 'employé' : 'responsable' }} </h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
         <form class="add-new-user pt-0" id="addNewUserForm" wire:submit='update'>
+
+            <div class="m-5">
+                @if (session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+            </div>
+
             <div class="mb-6">
                 <label class="form-label" for="add-user-contact">Matricule</label>
                 <input type="text" wire:model='matricule' id="add-user-contact"

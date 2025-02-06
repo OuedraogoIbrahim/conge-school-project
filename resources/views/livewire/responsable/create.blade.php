@@ -1,9 +1,5 @@
 <div>
-
-    @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
-    <div wire:ignore.self class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser"
+    <div wire:ignore.self class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddResponsable"
         aria-labelledby="offcanvasAddUserLabel">
         <div class="offcanvas-header border-bottom">
             <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Ajouter un responsable</h5>
@@ -11,6 +7,11 @@
         </div>
         <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
             <form class="add-new-user pt-0" id="addNewUserForm" wire:submit='submit'>
+                <div class="m-5">
+                    @if (session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+                </div>
                 <div class="mb-6">
                     <label class="form-label" for="add-user-contact">Matricule</label>
                     <input type="text" wire:model='matricule' id="add-user-contact"
@@ -45,8 +46,8 @@
                 </div>
                 <div class="mb-6">
                     <div wire:ignore>
-                        <label class="form-label" for="service-take">Service</label>
-                        <select wire:model='service' id="service-take"
+                        <label class="form-label" for="service-take-responsable">Service</label>
+                        <select wire:model='service' id="service-take-responsable"
                             class="select2 form-select @error('service') is-invalid @enderror">
                             <option value="">Choisir le service</option>
                             @foreach ($services as $s)
@@ -60,8 +61,8 @@
                 </div>
                 <div class="mb-6">
                     <div wire:ignore>
-                        <label class="form-label" for="fonction-take">Fonction</label>
-                        <select wire:model='fonction' id="fonction-take"
+                        <label class="form-label" for="fonction-take-responsable">Fonction</label>
+                        <select wire:model='fonction' id="fonction-take-responsable"
                             class="select2 form-select @error('fonction') is-invalid @enderror">
                             <option value="">Choisir la fonction</option>
                             @foreach ($fonctions as $s)
@@ -142,7 +143,7 @@
     <script>
         $(document).ready(function() {
 
-            $('#service-take').on('change', function(e) {
+            $('#service-take-responsable').on('change', function(e) {
                 var data = $(this).val(); // Récupère la valeur sélectionnée
                 console.log(data);
 
@@ -152,7 +153,7 @@
         });
 
         $(document).ready(function() {
-            $('#fonction-take').on('change', function(e) {
+            $('#fonction-take-responsable').on('change', function(e) {
                 var data = $(this).val();
                 @this.set('fonction', data);
                 // @this.call('selectNiveau');

@@ -1,45 +1,36 @@
 {
     "menu": [
-       
-        {
-            "menuHeader": "Pages"
-        },
-
-        {
-            "icon": "menu-icon tf-icons ti ti-smart-home",
-            "url": "employes",
-            "name": "Employés",
-            "slug": "employes"
-        },
-
-        {
-            "icon": "menu-icon tf-icons ti ti-smart-home",
-            "url": "responsables",
-            "name": "Responsables",
-            "slug": "responsables"
-        },
-
-        {
-            "icon": "menu-icon tf-icons ti ti-smart-home",
-            "url": "services",
-            "name": "Services",
-            "slug": "services"
-        },
-
-        {
-            "icon": "menu-icon tf-icons ti ti-smart-home",
-            "url": "fonctions",
-            "name": "Fonctions",
-            "slug": "fonctions"
-        },
-
 
         {
             "icon": "menu-icon tf-icons ti ti-smart-home",
             "url": "dashboard",
             "name": "Tableau de bord",
             "slug": "dashboard"
-        }
+        },
+       
+            {
+                "icon": "menu-icon tf-icons ti ti-users",
+                "url": "employes",
+                "name": "Employés/Responsables",
+                "slug": "employes",
+                "visibilite": "grh"
+            },
+            {
+                "icon": "menu-icon tf-icons ti ti-building",
+                "url": "services",
+                "name": "Services",
+                "slug": "services",
+                "visibilite": "grh"
+            },
+            {
+                "icon": "menu-icon tf-icons ti ti-briefcase",
+                "url": "fonctions",
+                "name": "Fonctions",
+                "slug": "fonctions",
+                "visibilite": "grh"
+            }
+        
+
         
     ]
 }

@@ -53,7 +53,7 @@
                 <thead class="border-top">
                     <tr>
                         <th>Nom</th>
-                        <th>Responsable</th>
+                        {{-- <th>Responsable</th> --}}
                         <th>Description</th>
                         @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
                                 Illuminate\Support\Facades\Auth::user()->role == 'responsable')
@@ -73,7 +73,7 @@
                             @endphp
                             <tr>
                                 <th>{{ $service->nom }}</th>
-                                <th>{{ $responsable->nom . ' ' . $responsable->prenom }}</th>
+                                {{-- <th>{{ $responsable->nom . ' ' . $responsable->prenom }}</th> --}}
                                 <th>{{ !empty($service->description) ? $service->description : '-----' }}</th>
                                 @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
                                         Illuminate\Support\Facades\Auth::user()->role == 'responsable')

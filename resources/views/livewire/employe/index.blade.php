@@ -38,7 +38,18 @@
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4" wire:ignore>
+                    <label for="selectRole" class="form-label">Role</label>
+                    <select wire:model='role' id="selectRole" class="select2 form-select form-select-lg"
+                        data-allow-clear="false">
+                        <option value="">Selectionner le role</option>
+                        <option value="responsable">Responsable</option>
+                        <option value="employe">Employé</option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-4 mt-4">
                     <label>Nom ou Prénom</label>
                     <input type="search" wire:model.live.debounce.1000ms='search' class="form-control" placeholder="">
                 </div>
@@ -64,7 +75,7 @@
                             </button>
                             <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4"
                                 tabindex="0" aria-controls="DataTables_Table_0" type="button"
-                                data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><span><i
+                                data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddResponsable"><span><i
                                         class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
                                         class="d-none d-sm-inline-block">Ajouter un responsable</span></span>
                             </button>
@@ -82,6 +93,7 @@
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>Service</th>
                         <th>Fonction</th>
                         @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
@@ -93,7 +105,7 @@
                 <tbody>
                     @if ($users->isEmpty())
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Aucun utilisateur trouvé.</td>
+                            <td colspan="8" class="text-center text-muted">Aucun utilisateur trouvé.</td>
                         </tr>
                     @else
                         @foreach ($users as $user)
@@ -102,6 +114,7 @@
                                 <th>{{ $user->nom }}</th>
                                 <th>{{ $user->prenom }}</th>
                                 <th>{{ $user->email }}</th>
+                                <th>{{ $user->role }}</th>
                                 <th>{{ $user->service->nom }}</th>
                                 <th>{{ $user->fonction->nom }}</th>
                                 @if (Illuminate\Support\Facades\Auth::user()->role == 'grh' ||
@@ -113,13 +126,19 @@
                                                 class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill delete-record">
                                                 <i class="ti ti-trash ti-md"></i>
                                             </a>
-
                                             <button wire:click="sendUser('{{ $user->id }}')"
                                                 class="btn btn-sm btn-icon edit-record btn-text-secondary rounded-pill waves-effect"
                                                 data-id="11" data-bs-toggle="offcanvas"
                                                 data-bs-target="#offcanvasStart" aria-controls="offcanvasStart">
                                                 <i class="ti ti-edit"></i>
                                             </button>
+                                            <a href="javascript:void(0);"
+                                                wire:click="showEmploye('{{ $user->id }}')"
+                                                class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"
+                                                data-bs-original-title="Voir" data-bs-toggle="modal"
+                                                data-bs-target="#showEmploye"><i class="ti ti-eye ti-md"></i>
+                                            </a>
+
                                         </div>
                                     </td>
                                 @endif
@@ -134,9 +153,7 @@
         </div>
 
 
-        {{--  --}}
-
-        {{--  --}}
+        @include('_partials._modals.modal-show-employe');
 
         <script>
             function confirmDelete(event, employeId) {
@@ -199,6 +216,14 @@
             $('#selectFonction').on('change', function(e) {
                 var data = $('#selectFonction').select2("val");
                 @this.set('fonction', data);
+
+            });
+        });
+        $(document).ready(function() {
+            // $('#selectService').select2();
+            $('#selectRole').on('change', function(e) {
+                var data = $('#selectRole').select2("val");
+                @this.set('role', data);
 
             });
         });

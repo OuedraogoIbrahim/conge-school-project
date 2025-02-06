@@ -11,47 +11,6 @@ use Illuminate\View\View;
 class AuthentificationController extends Controller
 {
     //
-    public function registerForm(): View
-    {
-        $pageConfigs = ['myLayout' => 'blank'];
-        return view('authentifcation.register', compact('pageConfigs'));
-    }
-
-    public function register(Request $request)
-    {
-
-        // $valid = $request->validate([
-        //     'nom' => 'required',
-        //     'prenom' => 'required',
-        //     'email' => 'required|email|unique:users,email',
-        //     'etablissement' => 'required',
-        //     'logo' => 'nullable|mimes:jpg,jpeg,png',
-        //     'password' => 'required|min:8|confirmed',
-        //     'telephone' => 'required|unique:users,telephone',
-        //     // 'terms' => 'accepted'
-        // ]);
-
-
-        // Création de l'utilisateur
-        // $user = new User();
-        // $user->nom = $valid['nom'];
-        // $user->prenom = $valid['prenom'];
-        // $user->email = $valid['email'];
-        // $user->telephone = $valid['telephone'];
-
-        // $user->role = 'superviseur';
-        // $user->password = Hash::make($valid['password']);
-
-        // $user->establishment_id = $etablissement->id;
-        // $user->save();
-
-
-
-        // Auth::login($user);
-
-        return redirect()->route('dashboard');
-    }
-
     public function loginForm(): View
     {
         $pageConfigs = ['myLayout' => 'blank'];
