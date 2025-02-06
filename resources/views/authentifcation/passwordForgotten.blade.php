@@ -5,7 +5,7 @@
 
 @extends('layouts/layoutMaster')
 
-@section('title', 'Forgot Password Cover - Pages')
+@section('title', 'Mot de passe oublié')
 
 @section('vendor-style')
     @vite(['resources/assets/vendor/libs/@form-validation/form-validation.scss'])
@@ -55,12 +55,18 @@
                     <h4 class="mb-1">Mot de passe oublié ? 🔒</h4>
                     <p class="mb-6">Entrez votre email et nous vous enverrons les instructions pour réinitialiser votre
                         mot de passe</p>
-                    <form id="formAuthentication" class="mb-6">
+                    <form id="formAuthentication" class="mb-6" method="POST">
                         @csrf
                         <div class="mb-6">
                             <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" name="email"
+                            <input type="email" class="form-control" id="email" name="email"
                                 placeholder="Entrez votre email" autofocus>
+                            @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
                         </div>
                         <button class="btn btn-primary d-grid w-100">Envoyer le lien de réinitialisation</button>
                     </form>

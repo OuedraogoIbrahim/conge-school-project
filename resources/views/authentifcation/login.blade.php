@@ -5,7 +5,7 @@
 
 @extends('layouts/layoutMaster')
 
-@section('title', 'Login Cover - Pages')
+@section('title', 'Connexion')
 
 @section('vendor-style')
     @vite(['resources/assets/vendor/libs/@form-validation/form-validation.scss'])
@@ -55,6 +55,11 @@
                     <p class="mb-6">Veuillez vous connecter à votre compte pour commencer l'aventure</p>
 
                     <form id="formAuthentication" class="mb-6" method="POST">
+                        @if (session()->has('status'))
+                            <div class="alert alert-info">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                         @csrf
                         <div class="mb-6">
                             <label for="email" class="form-label">Email </label>

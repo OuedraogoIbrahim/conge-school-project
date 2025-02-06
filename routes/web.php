@@ -17,7 +17,14 @@ Route::middleware('guest')->group(function () {
     Route::get('/', [AuthentificationController::class, 'loginForm'])->name('login');
     Route::post('/', [AuthentificationController::class, 'login']);
 
-    Route::get('/mot-de-passe-oublie', [AuthentificationController::class, 'passwordForgotten'])->name('password.forgotten');
+    Route::get('/mot-de-passe-oublie', [AuthentificationController::class, 'passwordForgottenForm'])->name('password.forgotten');
+    Route::post('/mot-de-passe-oublie', [AuthentificationController::class, 'passwordForgotten'])->name('password.forgotten');
+
+    Route::get('/reset-password/{token}', [AuthentificationController::class, 'resetPasswordForm'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [AuthentificationController::class, 'resetPassword'])
+        ->name('password.update');
 });
 
 Route::get('changement-mot-de-passe', [AuthentificationController::class, 'changePasswordForm'])->middleware('auth')->name('change.password');
