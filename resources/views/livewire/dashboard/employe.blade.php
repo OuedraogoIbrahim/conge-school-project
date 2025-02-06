@@ -95,13 +95,24 @@
             <div
                 class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0 mt-n6 mt-md-0">
 
-                <div class="dt-buttons btn-group flex-wrap">
-                    <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4" tabindex="0"
-                        aria-controls="DataTables_Table_0" type="button" data-bs-toggle="modal"
-                        data-bs-target="#demande-create"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
-                                class="d-none d-sm-inline-block">Créer une demande</span></span>
-                    </button>
-                </div>
+                @if ($responsableService)
+                    <div class="dt-buttons btn-group flex-wrap">
+                        <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4"
+                            tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="modal"
+                            data-bs-target="#demande-create"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
+                                    class="d-none d-sm-inline-block">Créer une demande</span></span>
+                        </button>
+                    </div>
+                @else
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <h5 class="alert-heading">Impossible de créer une demande</h5>
+                        <p>Vous ne pouvez pas soumettre une demande d'absence ou de congé car aucun responsable n'est
+                            assigné à votre service.</p>
+                        <hr>
+                        <p class="mb-0">Veuillez contacter votre administration pour résoudre ce problème.</p>
+                    </div>
+                @endif
+
             </div>
         </div>
     </div>
@@ -446,10 +457,10 @@
             });
         @endif
 
-        @if (session('error'))
+        @if (session()->has('error'))
             Swal.fire({
-                icon: 'error',
                 title: 'Erreur',
+                icon: 'error',
                 text: '{{ session('error') }}',
                 timer: 5000,
                 timerProgressBar: true,

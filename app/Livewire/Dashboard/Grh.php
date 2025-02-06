@@ -7,6 +7,7 @@ use App\Mail\ResponseDemandeMail;
 use App\Models\DemandeConge;
 use App\Models\Employe;
 use App\Models\Responsable;
+use App\Models\Service;
 use App\Models\StatutDemande;
 use App\Notifications\DemandeCongeNotification;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class Grh extends Component
 
     public $employes;
     public $responsables;
+    public $servicesSansResponsable;
 
     public $demandesAttentes;
     public $demandesAcceptees;
@@ -55,6 +57,10 @@ class Grh extends Component
     {
         $this->employes = Employe::all();
         $this->responsables = Responsable::all();
+
+        $this->servicesSansResponsable = Service::whereDoesntHave('users', function ($query) {
+            $query->where('role', 'responsable');
+        })->get();
 
         $statuts = StatutDemande::whereIn('statut', ['demander', 'accepter', 'refuser'])
             ->get()

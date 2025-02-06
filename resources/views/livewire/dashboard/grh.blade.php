@@ -14,6 +14,27 @@
         @endif
     </div>
 
+    {{-- Services sans responsable --}}
+    @if ($servicesSansResponsable->isNotEmpty())
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="alert-heading">Attention !</h5>
+                    <p>Certains services n'ont pas de responsable assigné :</p>
+                    <ul>
+                        @foreach ($servicesSansResponsable as $service)
+                            <li><strong>{{ $service->nom }}</strong></li>
+                        @endforeach
+                    </ul>
+                    <hr>
+                    <p class="mb-0">Veuillez assigner un responsable dès que possible.</p>
+                </div>
+            </div>
+        </div>
+    @endif
+    {{-- Services sans responsable --}}
+
+
     <div class="row g-6 mb-5">
 
         <div class="col-lg-3 col-sm-6">
@@ -305,7 +326,7 @@
 
 @script
     <script>
-        @if (session('message'))
+        @if (session()->has('message'))
             Swal.fire({
                 icon: 'success',
                 title: 'Succès',
@@ -317,7 +338,7 @@
             });
         @endif
 
-        @if (session('error'))
+        @if (session()->has('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',

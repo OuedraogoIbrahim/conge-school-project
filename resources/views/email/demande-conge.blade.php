@@ -17,17 +17,17 @@
             </tr>
             <tr>
                 <td style="padding: 20px; text-align: left; font-size: 16px; color: #555;">
-                    <p>Bonjour [Nom du Supérieur Hiérarchique],</p>
+                    <p>Bonjour ,</p>
                     <p>Vous avez reçu une demande de congé ou d'absence de la part de
                         {{ $user->nom . ' ' . $user->prenom }}. Voici les
                         détails de la demande :</p>
                     <ul style="list-style: none; padding: 0; line-height: 1.6;">
-                        <li><strong>Nom :</strong> [{{ $user->nom }}]</li>
-                        <li><strong>Prénom :</strong> [{{ $user->prenom }}]</li>
-                        <li><strong>Date de début :</strong> [{{ $demande->date_debut }}]</li>
-                        <li><strong>Date de fin :</strong> [{{ $demande->date_din }}]</li>
-                        <li><strong>Motif :</strong> [{{ $demande->motif }}]</li>
-                        <li><strong>Type de demande :</strong> [{{ $demande->type_conge }}]</li>
+                        <li><strong>Nom :</strong> {{ $user->nom }}</li>
+                        <li><strong>Prénom :</strong> {{ $user->prenom }}</li>
+                        <li><strong>Date de début :</strong> {{ $demande->date_debut }}</li>
+                        <li><strong>Date de fin :</strong> {{ $demande->date_fin }}</li>
+                        <li><strong>Motif :</strong> {{ $demande->motif }}</li>
+                        <li><strong>Type de demande :</strong> {{ $demande->type_conge }}</li>
                     </ul>
                     <p>Veuillez cliquer sur l'un des boutons ci-dessous pour accepter ou refuser cette demande.</p>
                 </td>

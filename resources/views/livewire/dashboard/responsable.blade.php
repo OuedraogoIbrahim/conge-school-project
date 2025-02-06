@@ -264,7 +264,7 @@
 
 @script
     <script>
-        @if (session('message'))
+        @if (session()->has('message'))
             Swal.fire({
                 icon: 'success',
                 title: 'Succès',
@@ -276,7 +276,7 @@
             });
         @endif
 
-        @if (session('error'))
+        @if (session()->has('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
