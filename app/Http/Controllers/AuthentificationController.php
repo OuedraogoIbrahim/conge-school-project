@@ -42,20 +42,21 @@ class AuthentificationController extends Controller
     public function passwordForgottenForm(): View
     {
         $pageConfigs = ['myLayout' => 'blank'];
-        return view('authentifcation.passwordForgotten', compact('pageConfigs'));
+
+        return view('authentifcation.password-forgotten', compact('pageConfigs'));
     }
 
     public function passwordForgotten(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $result = Password::sendResetLink($request->only('email'));
 
-        return $status === Password::ResetLinkSent
-            ? redirect()->route('login')->with(['status' => __($status)])
-            : back()->withErrors(['email' => __($status)]);
+        if ($result === Password::RESET_LINK_SENT) {
+            return redirect()->route('login')->with(['status' => __($result)]);
+        }
+
+        return back()->withErrors(['email' => __($result)]);
     }
 
     public function resetPasswordForm(string $token)

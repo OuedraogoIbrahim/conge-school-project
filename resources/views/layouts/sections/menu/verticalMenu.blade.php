@@ -2,6 +2,21 @@
     use Illuminate\Support\Facades\Route;
     $configData = Helper::appClasses();
 @endphp
+<style>
+    .app-logo {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .app-brand-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6B46C1 0%,rgb(255, 115, 0) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+</style>
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 
@@ -10,7 +25,7 @@
         <div class="app-brand demo">
             <a href="{{ url('/') }}" class="app-brand-link">
                 <span class="app-brand-logo demo">@include('_partials.macros', ['height' => 20])</span>
-                <span class="app-brand-text demo menu-text fw-bold">{{ config('variables.templateName') }}</span>
+                <span class="app-brand-text demo menu-text fw-bold">i-CongeIBAM</span>
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">

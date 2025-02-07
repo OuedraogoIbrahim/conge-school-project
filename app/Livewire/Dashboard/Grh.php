@@ -80,6 +80,7 @@ class Grh extends Component
         // Filtrer les demandes
         // $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
         $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id)->where('updated_at', '<=', now()->subDays(5));
+        $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
         $this->demandesAcceptees = $demandes->where('statut_demande_id', $this->statutAccepter?->id);
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
         $this->demandesActives = $this->demandesAcceptees->where('date_fin', '>=', now()->toDateString());
