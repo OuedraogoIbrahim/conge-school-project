@@ -43,6 +43,18 @@
 
 <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
+<!-- Message de bienvenue -->
+@if (Auth::check())
+    <div class="navbar-nav-left d-flex align-items-center">
+        <div class="nav-item">
+            <span class="nav-link">
+                Bienvenue, <strong>{{ Auth::user()->prenom }} {{ Auth::user()->nom }} 👋</strong> ({{ Auth::user()->role }})
+            </span>
+        </div>
+    </div>
+@endif
+
+<div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
     <ul class="navbar-nav flex-row align-items-center ms-auto">
         @if (isset($menuHorizontal))
             <!-- Search -->

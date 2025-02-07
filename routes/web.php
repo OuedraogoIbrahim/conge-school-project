@@ -25,6 +25,7 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/reset-password', [AuthentificationController::class, 'resetPassword'])
         ->name('password.update');
+    Route::get('/mot-de-passe-oublie', [AuthentificationController::class, 'passwordForgotten'])->name('password.forgotten');
 });
 
 Route::get('changement-mot-de-passe', [AuthentificationController::class, 'changePasswordForm'])->middleware('auth')->name('change.password');
@@ -32,7 +33,8 @@ Route::post('changement-mot-de-passe', [AuthentificationController::class, 'chan
 
 
 
-Route::middleware(['auth', 'change.password'])->group(function () {
+Route::middleware(['auth', ])->group(function () {
+Route::middleware(['auth', ])->group(function () {
     Route::post('deconnexion', [AuthentificationController::class, 'deconnexion'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('profile', ProfileController::class)->name('profile');
@@ -48,3 +50,6 @@ Route::middleware(['auth', 'change.password'])->group(function () {
 });
 
 Route::post('/notifications/read/{id}', 'App\Http\Controllers\NotificationController@markAsRead')->name('notifications.read');
+
+
+});

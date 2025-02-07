@@ -6,6 +6,7 @@
 @extends('layouts/layoutMaster')
 
 @section('title', 'Changement de mot de passe')
+@section('title', 'Reset Password Cover - Pages')
 
 @section('vendor-style')
     @vite(['resources/assets/vendor/libs/@form-validation/form-validation.scss'])
@@ -27,6 +28,7 @@
     <div class="authentication-wrapper authentication-cover">
         <!-- Logo -->
         <a href="{{ route('dashboard') }}" class="app-brand auth-cover-brand">
+        <a href="{{ url('/') }}" class="app-brand auth-cover-brand">
             <span class="app-brand-logo demo">@include('_partials.macros', ['height' => 20, 'withbg' => 'fill: #fff;'])</span>
             <span class="app-brand-text demo text-heading fw-bold">{{ config('variables.templateName') }}</span>
         </a>
