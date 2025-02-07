@@ -78,8 +78,15 @@ class Grh extends Component
         ])->get();
 
         // Filtrer les demandes
-        // $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
-        $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id)->where('updated_at', '<=', now()->subDays(5));
+        $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
+        // $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id)
+        //     ->where(function ($query) {
+        //         $query->where('updated_at', '<=', now()->subDays(5))
+        //             ->orWhereHas('notifications', function ($subQuery) {
+        //                 $subQuery->whereJsonContains('data->demande', '9e276234-a6b1-42e7-a045-6514b4e079e6');
+        //             });
+        //     });
+
         $this->demandesAcceptees = $demandes->where('statut_demande_id', $this->statutAccepter?->id);
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
         $this->demandesActives = $this->demandesAcceptees->where('date_fin', '>=', now()->toDateString());

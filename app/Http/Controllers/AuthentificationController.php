@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
-use LaravelLang\Lang\Plugins\Spark\Stripe;
 
 class AuthentificationController extends Controller
 {
