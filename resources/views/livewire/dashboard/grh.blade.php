@@ -138,12 +138,12 @@
                         <thead class="border-bottom">
                             <tr>
                                 <th>EMPLOYé</th>
+                                <th>Role</th>
                                 <th>SERVICE</th>
                                 <th>FONCTION</th>
                                 <th>DATE Début</th>
                                 <th>DATE FIN</th>
                                 <th>DATE SOUMISSION</th>
-                                <th>TYPE</th>
                                 <th>ACTIONS</th>
                             </tr>
                         </thead>
@@ -155,6 +155,9 @@
                                 <tr>
                                     <td class="pt-4">
                                         {{ $d->employe->user->nom . ' ' . $d->employe->user->prenom }}
+                                    </td>
+                                    <td class="pt-4">
+                                        {{ $d->employe->user->role }}
                                     </td>
                                     <td class="pt-4">
                                         {{ $d->employe->user->service->nom }}
@@ -172,7 +175,6 @@
                                         {{ \Carbon\Carbon::parse($d->date_soumission)->translatedFormat('d M Y') }}
                                     </td>
 
-                                    <td class="pt-4"><span class="badge bg-label-warning">{{ $d->type_conge }}</span>
                                     </td>
                                     <td class="pt-4">
                                         <div class="dropdown">
@@ -189,7 +191,8 @@
                                                 <i class="ti ti-dots-vertical ti-md text-muted"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end">
-                                                @if ($d->date_soumission <= now()->subDays(5)->toDateString())
+
+                                                @if ($d->employe->user->role == 'responsable')
                                                     <button wire:click='accepterDemande("{{ $d->id }}")'
                                                         class="dropdown-item">
                                                         Accepter la demande
@@ -198,18 +201,39 @@
                                                         class="dropdown-item">
                                                         Refuser la demande
                                                     </button>
-                                                @elseif (in_array($d->id, $notificationDemandeIds))
-                                                    <button tabindex="0" aria-controls="DataTables_Table_0"
-                                                        type="button" data-bs-toggle="modal"
-                                                        data-bs-target="#demande-update"
-                                                        wire:click='modifierDemande("{{ $d->id }}")'
-                                                        class="dropdown-item">
-                                                        Modifier la demande
-                                                    </button>
+                                                    @if (in_array($d->id, $notificationDemandeIds))
+                                                        <button tabindex="0" aria-controls="DataTables_Table_0"
+                                                            type="button" data-bs-toggle="modal"
+                                                            data-bs-target="#demande-update"
+                                                            wire:click='modifierDemande("{{ $d->id }}")'
+                                                            class="dropdown-item">
+                                                            Modifier la demande
+                                                        </button>
+                                                    @endif
                                                 @else
-                                                    <span class="dropdown-item text-muted">Aucune action
-                                                        disponible</span>
+                                                    @if ($d->date_soumission <= now()->subDays(5)->toDateString())
+                                                        <button wire:click='accepterDemande("{{ $d->id }}")'
+                                                            class="dropdown-item">
+                                                            Accepter la demande
+                                                        </button>
+                                                        <button wire:click='refuserDemande("{{ $d->id }}")'
+                                                            class="dropdown-item">
+                                                            Refuser la demande
+                                                        </button>
+                                                    @elseif (in_array($d->id, $notificationDemandeIds))
+                                                        <button tabindex="0" aria-controls="DataTables_Table_0"
+                                                            type="button" data-bs-toggle="modal"
+                                                            data-bs-target="#demande-update"
+                                                            wire:click='modifierDemande("{{ $d->id }}")'
+                                                            class="dropdown-item">
+                                                            Modifier la demande
+                                                        </button>
+                                                    @else
+                                                        <span class="dropdown-item text-muted">Aucune action
+                                                            disponible</span>
+                                                    @endif
                                                 @endif
+
                                             </div>
 
                                         </div>

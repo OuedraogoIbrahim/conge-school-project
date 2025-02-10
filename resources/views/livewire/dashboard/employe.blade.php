@@ -97,8 +97,9 @@
 
                 @if ($responsableService)
                     <div class="dt-buttons btn-group flex-wrap">
-                        <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4"
-                            tabindex="0" aria-controls="DataTables_Table_0" type="button" data-bs-toggle="modal"
+                        <button wire:click='reinitislisation'
+                            class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4" tabindex="0"
+                            aria-controls="DataTables_Table_0" type="button" data-bs-toggle="modal"
                             data-bs-target="#demande-create"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
                                     class="d-none d-sm-inline-block">Créer une demande</span></span>
                         </button>

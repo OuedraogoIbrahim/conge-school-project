@@ -2,18 +2,15 @@
 
 namespace App\Livewire\Dashboard;
 
-use App\Mail\DemandeCongeMail;
 use App\Mail\ResponseDemandeMail;
 use App\Models\DemandeConge;
 use App\Models\Employe;
-use App\Models\Responsable;
 use App\Models\Service;
 use App\Models\StatutDemande;
+use App\Models\User;
 use App\Notifications\DemandeCongeNotification;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class Grh extends Component
@@ -72,7 +69,7 @@ class Grh extends Component
     public function mount()
     {
         $this->employes = Employe::all();
-        $this->responsables = Responsable::all();
+        $this->responsables = User::query()->where('role', 'responsable')->get();
 
         $this->servicesSansResponsable = Service::whereDoesntHave('users', function ($query) {
             $query->where('role', 'responsable');

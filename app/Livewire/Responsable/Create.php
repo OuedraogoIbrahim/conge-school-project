@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Responsable;
 
+use App\Models\Employe;
 use App\Models\Fonction;
 use App\Models\Responsable;
 use App\Models\Service;
@@ -69,9 +70,9 @@ class Create extends Component
             $user->fonction_id = $this->fonction;
             $user->save();
 
-            $responsable = new Responsable();
-            $responsable->user_id = $user->id;
-            $responsable->save();
+            $employe = new Employe();
+            $employe->user_id = $user->id;
+            $employe->save();
 
             redirect()->route('employes')->with('message', 'Responsable ' . $this->nom . ' ajouté avec succès');
         }

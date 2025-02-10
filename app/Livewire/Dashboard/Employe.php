@@ -11,7 +11,6 @@ use App\Notifications\ModificationDemandeNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class Employe extends Component
@@ -77,6 +76,11 @@ class Employe extends Component
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
         $this->demandesPlannifiees = $demandes->where('statut_demande_id', $this->statutPlannifier?->id);
         $this->demandesActives = $this->demandesAcceptees->where('date_fin', '>=', now()->toDateString());
+    }
+
+    public function reinitislisation()
+    {
+        $this->reset(['id', 'dateDebut', 'dateFin', 'motif', 'typeConge', 'statutDemande']);
     }
 
     public function submit()

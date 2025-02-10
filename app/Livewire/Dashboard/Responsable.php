@@ -5,11 +5,10 @@ namespace App\Livewire\Dashboard;
 use App\Mail\DemandeCongeMail;
 use App\Mail\ResponseDemandeMail;
 use App\Models\DemandeConge;
-use App\Models\Employe;
-use App\Models\Responsable as ModelsResponsable;
 use App\Models\StatutDemande;
 use App\Models\User;
 use App\Notifications\DemandeCongeNotification;
+use App\Notifications\ModificationDemandeNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -20,8 +19,9 @@ class Responsable extends Component
 
     public $user;
     public $service;
+    public $employe;
 
-    public $employes;
+    public $employes; // Liste des employes
     public $grh;
 
     public $demandesAttentes;
@@ -29,10 +29,17 @@ class Responsable extends Component
     public $demandesRefusees;
     public $demandesActives; // Les demandes acceptees qui sont actives
 
+    public $mesDemandesAttentes;
+    public $mesDemandesAcceptees;
+    public $mesDemandesRefusees;
+    public $mesDemandesActives; // Les demandes acceptees qui sont actives
+    public $mesDemandesPlannifiees;
+
+
     public $statutAttente;
     public $statutAccepter;
     public $statutRefuser;
-
+    public $statutPlannifier;
 
     // Champs de validation du formulaire
     public $id;
@@ -74,22 +81,26 @@ class Responsable extends Component
     public function mount()
     {
         $this->user = Auth::user();
+        $this->employe = $this->user->employe;
         $this->service = $this->user->service;
         $this->employes = $this->service->users()->where('role', 'employe')->get();
         $this->grh = User::query()->where('role', 'grh')->first();
 
-        $statuts = StatutDemande::whereIn('statut', ['demander', 'accepter', 'refuser'])
+        $statuts = StatutDemande::whereIn('statut', ['demander', 'accepter', 'refuser', 'plannifier'])
             ->get()
             ->keyBy('statut');
 
         $this->statutAttente = $statuts['demander'] ?? null;
         $this->statutAccepter = $statuts['accepter'] ?? null;
         $this->statutRefuser = $statuts['refuser'] ?? null;
+        $this->statutPlannifier = $statuts['plannifier'] ?? null;
 
-        // Récupérer toutes les demandes en une seule requête
+        // ********************************************************************
+        // Récupérer toutes les demandes de mes employes en une seule requête
         $demandes = DemandeConge::query()
             ->whereHas('employe.user', function ($query) {
-                $query->where('service_id', $this->service->id);
+                $query->where('service_id', $this->service->id)
+                    ->where('role', 'employe'); // Filtre les utilisateurs avec le rôle "employe"
             })
             ->whereIn('statut_demande_id', [
                 optional($this->statutAttente)->id,
@@ -104,6 +115,24 @@ class Responsable extends Component
         $this->demandesAcceptees = $demandes->where('statut_demande_id', $this->statutAccepter?->id);
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
         $this->demandesActives = $this->demandesAcceptees->where('date_fin', '>=', now()->toDateString());
+
+        // ********************************************************************
+
+
+        // Récupérer toutes les demandes de l'employé en une seule requête
+        $mesDemandes = $this->employe->demandes()->get();
+
+        // Filtrer les demandes
+        $this->mesDemandesAttentes = $mesDemandes->where('statut_demande_id', $this->statutAttente?->id);
+        $this->mesDemandesAcceptees = $mesDemandes->where('statut_demande_id', $this->statutAccepter?->id);
+        $this->mesDemandesRefusees = $mesDemandes->where('statut_demande_id', $this->statutRefuser?->id);
+        $this->mesDemandesPlannifiees = $mesDemandes->where('statut_demande_id', $this->statutPlannifier?->id);
+        $this->mesDemandesActives = $this->mesDemandesAcceptees->where('date_fin', '>=', now()->toDateString());
+    }
+
+    public function reinitislisation()
+    {
+        $this->reset(['id', 'dateDebut', 'dateFin', 'motif', 'typeConge', 'statutDemande']);
     }
 
     public function submit()
@@ -111,7 +140,7 @@ class Responsable extends Component
         $this->validate();
 
         // Vérifier si une demande de congé existe déjà pour cette période
-        $chevauchement = DemandeConge::where('employe_id', $this->user->responsable->id)
+        $chevauchement = DemandeConge::where('employe_id', $this->user->employe->id)
             ->where(function ($query) {
                 $query->whereBetween('date_debut', [$this->dateDebut, $this->dateFin])
                     ->orWhereBetween('date_fin', [$this->dateDebut, $this->dateFin])
@@ -134,7 +163,7 @@ class Responsable extends Component
         $demande->motif = $this->motif;
         $demande->type_conge = $this->typeConge;
         $demande->statut_demande_id = $this->statutDemande;
-        $demande->employe_id = $this->user->responsable->id;
+        $demande->employe_id = $this->user->employe->id;
         if ($this->statutDemande == $this->statutAttente->id) {
             try {
                 $demande->save();
@@ -142,7 +171,7 @@ class Responsable extends Component
                 Notification::send($this->grh, new DemandeCongeNotification($demande));
                 return redirect()->route('dashboard')->with('message', 'Demande absence/congé ajoutée avec succès');
             } catch (\Exception $e) {
-                return redirect()->route('dashboard')->with('error', 'Une erreur est survenue. Envoie du mail echoué' . $e);
+                return redirect()->route('dashboard')->with('error', 'Une erreur est survenue. Envoie du mail echoué');
             }
         } else {
             $demande->save();
@@ -150,6 +179,107 @@ class Responsable extends Component
         }
     }
 
+    public function update()
+    {
+        $this->validate();
+
+        // Vérifier si une demande de congé existe déjà pour cette période
+        $chevauchement = DemandeConge::where('employe_id', $this->employe->id)
+            ->where(function ($query) {
+                $query->whereBetween('date_debut', [$this->dateDebut, $this->dateFin])
+                    ->orWhereBetween('date_fin', [$this->dateDebut, $this->dateFin])
+                    ->orWhere(function ($query) {
+                        $query->where('date_debut', '<=', $this->dateDebut)
+                            ->where('date_fin', '>=', $this->dateFin);
+                    });
+            })
+            ->whereIn('statut_demande_id', [$this->statutAttente->id, $this->statutAccepter->id]) // Seulement les demandes actives ou en attente
+            ->exists();
+
+        if ($chevauchement) {
+            return redirect()->route('dashboard')->with('error', 'Vous avez déjà une demande de congé ou un congé actif sur cette période.');
+        }
+
+
+        $demande = DemandeConge::query()->findOrFail($this->id);
+        $demande->date_debut = $this->dateDebut;
+        $demande->date_fin = $this->dateFin;
+        $demande->motif = $this->motif;
+        $demande->type_conge = $this->typeConge;
+        $demande->statut_demande_id = $this->statutDemande;
+        $demande->employe_id = $this->employe->id;
+        if ($this->statutDemande == $this->statutAttente->id) {
+            try {
+                Mail::to($this->grh->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+                Notification::send($this->grh, new DemandeCongeNotification($demande));
+                $demande->date_soumission = now();
+                $demande->update();
+                return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
+            } catch (\Exception $e) {
+                return redirect()->route('dashboard')->with('error', 'Une erreur est survenue. Envoie du mail echoué');
+            }
+        } else {
+            $demande->update();
+            return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
+        }
+    }
+
+    public function changerStatut(DemandeConge $demande)
+    {
+        // Vérifier si une demande de congé existe déjà pour cette période
+        $chevauchement = DemandeConge::where('employe_id', $demande->employe_id)
+            ->where(function ($query) use ($demande) {
+                $query->whereBetween('date_debut', [$demande->date_debut, $demande->date_fin])
+                    ->orWhereBetween('date_fin', [$demande->date_debut, $demande->date_fin])
+                    ->orWhere(function ($query) use ($demande) {
+                        $query->where('date_debut', '<=', $demande->date_debut)
+                            ->where('date_fin', '>=', $demande->date_fin);
+                    });
+            })
+            ->whereIn('statut_demande_id', [$this->statutAttente->id, $this->statutAccepter->id]) // Seulement les demandes actives ou en attente
+            ->exists();
+
+        if ($chevauchement) {
+            return redirect()->route('dashboard')->with('error', 'Vous avez déjà une demande de congé ou un congé actif sur cette période.');
+        }
+
+        try {
+            Mail::to($this->grh->email)->send(new DemandeCongeMail($this->user, $demande));
+            Notification::send($this->grh, new DemandeCongeNotification($demande));
+
+            $demande->statut_demande_id = $this->statutAttente->id;
+            $demande->date_soumission = now();
+            $demande->update();
+
+            return redirect()->route('dashboard')->with('message', 'Une demande a changé de statut (planifiée)');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard')->with('error', 'Une erreur est survenue. Envoie du mail echoué');
+        }
+    }
+
+
+    public function modifierDemande(DemandeConge $demande)
+    {
+        $this->id = $demande->id;
+        $this->dateDebut = $demande->date_debut;
+        $this->dateFin = $demande->date_fin;
+        $this->motif = $demande->motif;
+        $this->typeConge = $demande->type_conge;
+        $this->statutDemande = $demande->statut_demande_id;
+        $this->dispatch('event-update', ['id' => $this->typeConge])->self();
+    }
+
+    public function demandeModification(DemandeConge $demande)
+    {
+        $grh = User::query()->where('role', 'grh')->first();
+        // Mail::to($grh->email)->send(new DemandeCongeMail(Auth::user(), $demande));
+        Notification::send($grh, new ModificationDemandeNotification($demande, Auth::user()));
+        return redirect()->route('dashboard')->with('message', 'Demande de modification envoyée avec succès');
+    }
+
+
+    // **********************************************************************
+    // Gestion des demandes des employes
     public function accepterDemande($id)
     {
         $demande = DemandeConge::findOrFail($id);

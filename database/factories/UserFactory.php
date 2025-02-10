@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'matricule' => 123456789,
             'nom' => 'grh',
             'prenom' => 'grh',
-            'email' => 'grh@gmail.com',
+            'email' => 'ibrahiouedraogo888@gmail.com',
             'telephone' => 70707070,
             'sexe' => 'masculin',
             'adresse' => 'Ouagadougou',
