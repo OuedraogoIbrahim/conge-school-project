@@ -103,6 +103,7 @@ class Employe extends Component
         $demande = new DemandeConge();
         $demande->date_debut = $this->dateDebut;
         $demande->date_fin = $this->dateFin;
+        $demande->date_soumission = now();
         $demande->motif = $this->motif;
         $demande->type_conge = $this->typeConge;
         $demande->statut_demande_id = $this->statutDemande;
@@ -155,6 +156,7 @@ class Employe extends Component
             try {
                 Mail::to($this->responsableService->email)->send(new DemandeCongeMail(Auth::user(), $demande));
                 Notification::send($this->responsableService, new DemandeCongeNotification($demande));
+                $demande->date_soumission = now();
                 $demande->update();
                 return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
             } catch (\Exception $e) {
@@ -191,6 +193,7 @@ class Employe extends Component
             Notification::send($this->responsableService, new DemandeCongeNotification($demande));
 
             $demande->statut_demande_id = $this->statutAttente->id;
+            $demande->date_soumission = now();
             $demande->update();
 
             return redirect()->route('dashboard')->with('message', 'Une demande a changé de statut (planifiée)');

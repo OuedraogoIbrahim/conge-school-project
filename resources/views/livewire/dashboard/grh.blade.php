@@ -142,7 +142,7 @@
                                 <th>FONCTION</th>
                                 <th>DATE Début</th>
                                 <th>DATE FIN</th>
-                                <th>MOTIF</th>
+                                <th>DATE SOUMISSION</th>
                                 <th>TYPE</th>
                                 <th>ACTIONS</th>
                             </tr>
@@ -168,12 +168,20 @@
                                     <td class="pt-4">
                                         {{ \Carbon\Carbon::parse($d->date_fin)->translatedFormat('d M Y') }}
                                     </td>
-                                    <td class="pt-4">{{ $d->motif }}</td>
+                                    <td class="pt-4">
+                                        {{ \Carbon\Carbon::parse($d->date_soumission)->translatedFormat('d M Y') }}
+                                    </td>
 
                                     <td class="pt-4"><span class="badge bg-label-warning">{{ $d->type_conge }}</span>
                                     </td>
                                     <td class="pt-4">
                                         <div class="dropdown">
+                                            <a href="javascript:void(0);"
+                                                wire:click="VoirDemande('{{ $d->id }}')"
+                                                class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"
+                                                data-bs-original-title="Voir" data-bs-toggle="modal"
+                                                data-bs-target="#voirDemande"><i class="ti ti-eye ti-md"></i>
+                                            </a>
                                             <button
                                                 class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
                                                 type="button" id="coursActions{{ $d->id }}"
@@ -181,23 +189,29 @@
                                                 <i class="ti ti-dots-vertical ti-md text-muted"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end">
-                                                <button wire:click='accepterDemande("{{ $d->id }}")'
-                                                    class="dropdown-item">Accepter la demande
-                                                </button>
-                                                <button wire:click='refuserDemande("{{ $d->id }}")'
-                                                    class="dropdown-item">Refuser la demande
-                                                </button>
-
-                                                @if (in_array($d->id, $notificationDemandeIds))
+                                                @if ($d->date_soumission <= now()->subDays(5)->toDateString())
+                                                    <button wire:click='accepterDemande("{{ $d->id }}")'
+                                                        class="dropdown-item">
+                                                        Accepter la demande
+                                                    </button>
+                                                    <button wire:click='refuserDemande("{{ $d->id }}")'
+                                                        class="dropdown-item">
+                                                        Refuser la demande
+                                                    </button>
+                                                @elseif (in_array($d->id, $notificationDemandeIds))
                                                     <button tabindex="0" aria-controls="DataTables_Table_0"
                                                         type="button" data-bs-toggle="modal"
                                                         data-bs-target="#demande-update"
                                                         wire:click='modifierDemande("{{ $d->id }}")'
-                                                        class="dropdown-item" href="javascrip();">
+                                                        class="dropdown-item">
                                                         Modifier la demande
                                                     </button>
+                                                @else
+                                                    <span class="dropdown-item text-muted">Aucune action
+                                                        disponible</span>
                                                 @endif
                                             </div>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -307,6 +321,8 @@
     </div>
 
     @include('_partials/_modals/modal-edit-demande')
+    @include('_partials._modals.modal-show-demande-attente');
+
 
     <div
         wire:loading.class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">

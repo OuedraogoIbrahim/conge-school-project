@@ -39,6 +39,22 @@ class Grh extends Component
     public $motif;
     public $typeConge;
     public $statutDemande;
+    public $dateSoumission;
+
+
+    //Employe
+    public $matricule = '';
+    public $nom = '';
+    public $prenom = '';
+    public $adresse = '';
+    public $email = '';
+    public $telephone = '';
+    public $dateNaissance = '';
+    public $dateEmbauche = '';
+    public $sexe = '';
+    public $serviceShow = '';
+    public $fonctionShow;
+    public $roleShow;
 
 
     protected function rules()
@@ -78,8 +94,7 @@ class Grh extends Component
         ])->get();
 
         // Filtrer les demandes
-        // $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
-        $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id)->where('updated_at', '<=', now()->subDays(5));
+        // $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id)->where('date_soumission', '<=', now()->subDays(5)->toDateString());
         $this->demandesAttentes = $demandes->where('statut_demande_id', $this->statutAttente?->id);
         $this->demandesAcceptees = $demandes->where('statut_demande_id', $this->statutAccepter?->id);
         $this->demandesRefusees = $demandes->where('statut_demande_id', $this->statutRefuser?->id);
@@ -132,9 +147,35 @@ class Grh extends Component
         $demande->motif = $this->motif;
         $demande->type_conge = $this->typeConge;
         $demande->statut_demande_id = $this->statutDemande;
-        $demande->timestamps = false; // Desactiver temporairement la mise a jour automatique de upadted_at
+        // $demande->timestamps = false; 
         $demande->update();
         return redirect()->route('dashboard')->with('message', 'Demande absence/congé mise à jour avec succès');
+    }
+
+    public function VoirDemande(DemandeConge $demande)
+    {
+        //Employe
+        $user = $demande->employe->user;
+        $this->nom = $user->nom;
+        $this->prenom = $user->prenom;
+        $this->email = $user->email;
+        $this->telephone = $user->telephone;
+        $this->adresse = $user->adresse;
+        $this->fonctionShow = $user->fonction->nom;
+        $this->adresse = $user->adresse;
+        $this->dateNaissance = $user->date_naissance;
+        $this->dateEmbauche = $user->date_embauche;
+        $this->matricule = $user->matricule;
+        $this->sexe = $user->sexe;
+        $this->roleShow = $user->role;
+        $this->serviceShow = $user->service->nom;
+
+        //Demande
+        $this->dateDebut = $demande->date_debut;
+        $this->dateFin = $demande->date_fin;
+        $this->motif = $demande->motif;
+        $this->typeConge = $demande->type_conge;
+        $this->dateSoumission = $demande->date_soumission;
     }
 
 

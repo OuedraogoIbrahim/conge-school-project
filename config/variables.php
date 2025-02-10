@@ -4,7 +4,6 @@ return [
   "creatorName" => "Pixinvent",
   "creatorUrl" => "https://pixinvent.com",
   "templateName" => " i-CongeIBAM",
-  "templateName" => "ODISHA",
   "templateSuffix" => "Bootstrap Admin Template",
   "templateVersion" => "2.0.0",
   "templateFree" => false,

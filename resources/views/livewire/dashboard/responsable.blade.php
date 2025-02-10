@@ -88,13 +88,293 @@
         </div>
     </div>
 
-    {{-- Demandes en attente --}}
+    <div class="col-md-12">
+        <div
+            class="dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-6 mb-md-0 mt-n6 mt-md-0">
+
+            <div class="dt-buttons btn-group flex-wrap">
+                <button class="btn btn-secondary add-new btn-primary waves-effect waves-light mb-4" tabindex="0"
+                    aria-controls="DataTables_Table_0" type="button" data-bs-toggle="modal"
+                    data-bs-target="#demande-create"><span><i class="ti ti-plus me-0 me-sm-1 ti-xs"></i><span
+                            class="d-none d-sm-inline-block">Créer une demande</span></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+     <!-- Demandes -->
+     {{-- <div class="col-lg-12">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="card-title mb-0">
+                    <h5 class="mb-1">Demandes</h5>
+                    <p class="card-subtitle">Suivi des demandes</p>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="nav-align-top">
+                    <ul class="nav nav-tabs nav-fill rounded-0 timeline-indicator-advanced" role="tablist">
+                        <li class="nav-item">
+                            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-justified-demander" aria-controls="navs-justified-demander"
+                                aria-selected="true">Demandées</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-justified-plannifier" aria-controls="navs-justified-plannifier"
+                                aria-selected="false">Plannifiées</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-justified-accepter" aria-controls="navs-justified-accepter"
+                                aria-selected="false">Acceptées</button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+                                data-bs-target="#navs-justified-refuser" aria-controls="navs-justified-refuser"
+                                aria-selected="false">Rejetées</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content border-0 mx-1">
+                        <!-- Tab 1: Demander -->
+                        <div class="tab-pane fade show active" id="navs-justified-demander" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>EMPLOYé</th>
+                                            <th>DATE Début</th>
+                                            <th>DATE FIN</th>
+                                            <th>MOTIF</th>
+                                            <th>TYPE</th>
+                                            <th>ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $notificationDemandeIds = $notifications->pluck('data.demande')->toArray();
+                                        @endphp
+
+                                        @forelse ($demandesAttentes as $d)
+                                            <tr>
+                                                <td class="pt-4">
+                                                    {{ $d->employe->user->nom . ' ' . $d->employe->user->prenom }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($d->date_debut)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($d->date_fin)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">{{ $d->motif }}</td>
+                                                <td class="pt-4">
+                                                    <span class="badge bg-label-warning">{{ $d->type_conge }}</span>
+                                                </td>
+                                                <td class="pt-4">
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
+                                                            type="button" id="coursActions{{ $d->id }}"
+                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            @if (in_array($d->id, $notificationDemandeIds))
+                                                                <button class="dropdown-item" disabled>Demande de
+                                                                    modification en attente</button>
+                                                            @else
+                                                                <button
+                                                                    wire:click='demandeModification("{{ $d->id }}")'
+                                                                    class="dropdown-item">Demander la modification de
+                                                                    cette demande</button>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center pt-4">
+                                                    <p class="text-muted">Aucune demande en attente pour le moment.</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Plannifier -->
+                        <div class="tab-pane fade" id="navs-justified-plannifier" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>EMPLOYé</th>
+                                            <th>DATE Début</th>
+                                            <th>DATE FIN</th>
+                                            <th>MOTIF</th>
+                                            <th>TYPE</th>
+                                            <th>ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($demandesPlannifiees as $dp)
+                                            <tr>
+                                                <td class="pt-4">
+                                                    {{ $dp->employe->user->nom . ' ' . $dp->employe->user->prenom }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($dp->date_debut)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($dp->date_fin)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">{{ $dp->motif }}</td>
+
+                                                <td class="pt-4"><span
+                                                        class="badge bg-label-warning">{{ $dp->type_conge }}</span>
+                                                </td>
+                                                <td class="pt-4">
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
+                                                            type="button" id="coursActions{{ $dp->id }}"
+                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            <i class="ti ti-dots-vertical ti-md text-muted"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <button wire:click='changerStatut("{{ $dp->id }}")'
+                                                                class="dropdown-item" href="javascrip();">
+                                                                Changer le statut à "demandée"
+                                                            </button>
+                                                            <button tabindex="0" aria-controls="DataTables_Table_0"
+                                                                type="button" data-bs-toggle="modal"
+                                                                data-bs-target="#demande-update"
+                                                                wire:click='modifierDemande("{{ $dp->id }}")'
+                                                                class="dropdown-item" href="javascrip();">
+                                                                Modifier la demande
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center pt-4">
+                                                    <p class="text-muted">Aucune demande en attente pour le moment.</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Accepter -->
+                        <div class="tab-pane fade" id="navs-justified-accepter" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>EMPLOYé</th>
+                                            <th>DATE Début</th>
+                                            <th>DATE FIN</th>
+                                            <th>MOTIF</th>
+                                            <th>TYPE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($demandesAcceptees as $da)
+                                            <tr>
+                                            <tr>
+                                                <td class="pt-4">
+                                                    {{ $da->employe->user->nom . ' ' . $da->employe->user->prenom }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($da->date_debut)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($da->date_fin)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">{{ $da->motif }}</td>
+
+                                                <td class="pt-4"><span
+                                                        class="badge bg-label-warning">{{ $da->type_conge }}</span>
+                                                </td>
+
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center pt-4">
+                                                    <p class="text-muted">Aucune demande en attente pour le moment.</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 4: Refuser -->
+                        <div class="tab-pane fade" id="navs-justified-refuser" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>EMPLOYé</th>
+                                            <th>DATE Début</th>
+                                            <th>DATE FIN</th>
+                                            <th>MOTIF</th>
+                                            <th>TYPE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($demandesRefusees as $dr)
+                                            <tr>
+                                                <td class="pt-4">
+                                                    {{ $dr->employe->user->nom . ' ' . $dr->employe->user->prenom }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($dr->date_debut)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">
+                                                    {{ \Carbon\Carbon::parse($dr->date_fin)->translatedFormat('d M Y') }}
+                                                </td>
+                                                <td class="pt-4">{{ $dr->motif }}</td>
+
+                                                <td class="pt-4"><span
+                                                        class="badge bg-label-warning">{{ $dr->type_conge }}</span>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center pt-4">
+                                                    <p class="text-muted">Aucune demande en attente pour le moment.</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    <!--/ Demandes -->
+
+    {{-- Demandes en attente des employés de mon service --}}
     <div class="row g-6 mb-5">
 
         <div class="col-lg-12">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title m-0 me-2">Demandes en attente</h5>
+                    <h5 class="card-title m-0 me-2">Demandes en attente des employés de mon service</h5>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-borderless border-top">
@@ -126,6 +406,12 @@
                                     </td>
                                     <td class="pt-4">
                                         <div class="dropdown">
+                                            <a href="javascript:void(0);"
+                                                wire:click="VoirDemande('{{ $d->id }}')"
+                                                class="btn btn-icon btn-text-secondary waves-effect waves-light rounded-pill"
+                                                data-bs-original-title="Voir" data-bs-toggle="modal"
+                                                data-bs-target="#voirDemande"><i class="ti ti-eye ti-md"></i>
+                                            </a>
                                             <button
                                                 class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
                                                 type="button" id="coursActions{{ $d->id }}"
@@ -157,11 +443,12 @@
             </div>
         </div>
     </div>
-    {{-- Demandes en attente --}}
+    {{-- Demandes en attente des employés de mon service --}}
 
+    {{-- Demandes actives des employés de mon service --}}
     <div class="app-logistics-fleet-sidebar col h-100" id="app-logistics-fleet-sidebar">
         <div class="card-header border-0 pt-6 pb-1 d-flex justify-content-between">
-            <h5 class="mb-0 card-title">Demandes Actives</h5>
+            <h5 class="mb-0 card-title">Demandes Actives des employés de mon service</h5>
             <i class="ti ti-x ti-xs cursor-pointer close-sidebar d-md-none btn btn-sm btn-icon btn-text-secondary rounded-pill p-0"
                 data-bs-toggle="sidebar" data-overlay data-target="#app-logistics-fleet-sidebar"></i>
         </div>
@@ -179,7 +466,8 @@
                             $dateFin = Carbon\Carbon::parse($demande->date_fin);
                             $joursConges = $dateDebut->diffInDays($dateFin) + 1;
                         @endphp
-                        <div class="accordion-item border-0 active mb-0 shadow-none" id="demande-{{ $demande->id }}">
+                        <div class="accordion-item border-0 active mb-0 shadow-none"
+                            id="demande-{{ $demande->id }}">
                             <div class="accordion-header" id="demandeHeader{{ $demande->id }}">
                                 <div role="button" class="accordion-button shadow-none align-items-center"
                                     data-bs-toggle="collapse" data-bs-target="#demande{{ $demande->id }}"
@@ -245,6 +533,8 @@
             </div>
         </div>
     </div>
+    {{-- Demandes actives des employés de mon service --}}
+
 
     <div
         wire:loading.class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
@@ -257,6 +547,10 @@
             <div class="sk-chase-dot"></div>
         </div>
     </div>
+
+    @include('_partials/_modals/modal-create-demande')
+
+    @include('_partials._modals.modal-show-demande-attente');
 
 </div>
 </div>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->unique()->primary();
             $table->date('date_debut');
             $table->date('date_fin');
+            $table->date('date_soumission');
             $table->text('motif');
             $table->enum('type_conge', ['compensation', 'conge_payé', 'maternité', 'paternité', 'ancienneté', 'maladie', 'autre']);
 

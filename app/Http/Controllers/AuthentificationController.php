@@ -42,7 +42,7 @@ class AuthentificationController extends Controller
     {
         $pageConfigs = ['myLayout' => 'blank'];
 
-        return view('authentifcation.password-forgotten', compact('pageConfigs'));
+        return view('authentifcation.passwordForgotten', compact('pageConfigs'));
     }
 
     public function passwordForgotten(Request $request)
@@ -102,10 +102,12 @@ class AuthentificationController extends Controller
 
     public function changePasswordForm()
     {
+        $pageConfigs = ['myLayout' => 'blank'];
+
         if (!Hash::check('password', Auth::user()->password)) {
             return redirect()->route('dashboard');
         }
-        return view('authentifcation.changePassword');
+        return view('authentifcation.changePassword', compact('pageConfigs'));
     }
 
     public function changePassword(Request $request)
